@@ -1,0 +1,17 @@
+adta -r 10000000
+usage
+adta -s kevin
+usage
+adtd -r 1
+usage
+adtd -f 1
+usage
+adtd -b 1
+usage
+adts
+usage
+adtd -s kevin
+usage
+adtd -a
+usage
+q -f

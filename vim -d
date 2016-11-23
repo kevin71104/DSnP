@@ -1,0 +1,7 @@
+> out
+是把output 放到out這個檔案
+vim -d
+用vim打開比對
+eg:
+./memTest -F do1 > out
+vim -d out do1.out-ref

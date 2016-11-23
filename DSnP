@@ -1,0 +1,29 @@
+**sgi STL
+**better using class wrapper
+
+	class MyClass {
+    	A* _pp;
+	public:
+    	MyClass(int i = 0) { _pp = new A(i); }
+	    ~MyClass() { delete _pp; }
+	};
+
+	void f() {
+		MyClass o;  // o._pp is allocated
+	}
+	// o._pp is deleted automatically
+
+	All the operations on _pp should go through class MyClass
+		#Can make class A a private class to MyClass (by “friend”)
+	What about copy constructor or assignment operator?
+		#May need “reference count” to avoid double free error
+**memory management(p.32)
+168而非160，是因為8byte存大小(10)
+delete[] 裏面的cout (size*) p=b;p--;//p是尺寸前的記憶體位置
+memmgr static data membet(all class object using ONE memmgr)
+recycle_list[256] every element has a data member(class MemRecycleList pointer)
+		  to whose size%256 is same 
+
+**List and Array.pdf
+
+

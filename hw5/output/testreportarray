@@ -1,0 +1,58 @@
+adt> adta -r 10000000
+
+adt> usage
+Period time used : 5.44 seconds
+Total time used  : 5.44 seconds
+Total memory used: 767.1 M Bytes
+
+adt> adta -s kevin
+
+adt> usage
+Period time used : 0 seconds
+Total time used  : 5.44 seconds
+Total memory used: 767.1 M Bytes
+
+adt> adtd -r 1
+
+adt> usage
+Period time used : 0 seconds
+Total time used  : 5.44 seconds
+Total memory used: 767.1 M Bytes
+
+adt> adtd -f 1
+
+adt> usage
+Period time used : 0 seconds
+Total time used  : 5.44 seconds
+Total memory used: 767.1 M Bytes
+
+adt> adtd -b 1
+
+adt> usage
+Period time used : 0 seconds
+Total time used  : 5.44 seconds
+Total memory used: 767.1 M Bytes
+
+adt> adts
+
+adt> usage
+Period time used : 4.23 seconds
+Total time used  : 9.67 seconds
+Total memory used: 767.1 M Bytes
+
+adt> adtd -s kevin
+
+adt> usage
+Period time used : 0.02 seconds
+Total time used  : 9.69 seconds
+Total memory used: 767.1 M Bytes
+
+adt> adtd -a
+
+adt> usage
+Period time used : 0 seconds
+Total time used  : 9.69 seconds
+Total memory used: 767.1 M Bytes
+
+adt> q -f
+
