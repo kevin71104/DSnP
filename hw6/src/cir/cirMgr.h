@@ -42,12 +42,23 @@ public:
    void printFloatGates() const;
    void writeAag(ostream&) const;
    void setGateList(size_t size) { _GateList.reserve(size); _GateList.resize(size); }
+<<<<<<< HEAD
+	
+	static GateList	_GateList;
+	
+private:
+	IdList 				PiList;
+	IdList				PoList;
+	size_t				_AIGNum;		//the number of AIGgates
+
+=======
 
 	static GateList	_GateList;
 	
 private:
 	//map variableID to cirGate*
 	
+>>>>>>> 393d561f9dd6f43be0bea6c73b1b03b182a01d13
 };
 
 #endif // CIR_MGR_H
