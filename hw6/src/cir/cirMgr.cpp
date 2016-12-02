@@ -7,6 +7,7 @@
 ****************************************************************************/
 
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <cstdio>
 #include <ctype.h>
@@ -53,9 +54,8 @@ enum CirParseError {
 /**************************************/
 static unsigned lineNo = 0;  // in printint, lineNo needs to ++
 static unsigned colNo  = 0;  // in printing, colNo needs to ++
-static char buf[1024];
 static string errMsg;
-static int errInt;
+static unsigned errInt;
 static CirGate *errGate;
 
 static bool
@@ -145,14 +145,194 @@ parseError(CirParseError err)
    return false;
 }
 
+bool
+myStr2UInt(const string& str, unsigned& num)
+{
+   num = 0;
+   size_t i = 0;
+   bool valid = false;
+   for (; i < str.size(); ++i) {
+      if (isdigit(str[i])) {
+         num *= 10;
+         num += unsigned(str[i] - '0');
+         valid = true;
+      }
+      else return false;
+   }
+   return valid;
+}
+
 /**************************************************************/
 /*   class CirMgr member functions for circuit construction   */
 /**************************************************************/
 bool
 CirMgr::readCircuit(const string& fileName)
 {
-   return true;
-}
+	ifstream ifs(fileName.c_str());
+   if (!ifs) {
+      cerr << "Error: \"" << fileName << "\" does not exist!!" << endl;
+      return false;
+   }
+   
+   string temp;
+   unsigned M, I, L, O, A;
+   stringstream ss;
+   lineNo = colNo = 0;
+   IdList pofaninList, aigfanin1List, aigfanin2List, AigList;
+	
+	//after read in every line check if there is newline at the end
+	#define 	newline();                    			\
+				if(!ss.eof())                          \
+					return parseError(MISSING_NEWLINE); \
+				++lineNo;                              \
+				colNo = 0;                             \
+				ss.clear();                            \
+				ss.str("");										
+   
+   //check after this has exactly 1 space and followed with a number
+   #define 	correctip();									\
+				if( temp[colNo] != 32 ) 					\
+					return parseError(MISSING_SPACE);	\
+				colNo++;											\
+				if(temp[colNo] <= 32) 						\
+					return parseError(MISSING_NUM);		\
+				ss >> errMsg;
+				
+   //header
+   {
+		getline(ifs,temp);
+		//identifer
+		{
+			if( temp[colNo] < 32) return parseError(MISSING_IDENTIFIER);
+			ss << temp;
+			ss >> errMsg;
+			if( errMsg != "aag" ) return parseError(ILLEGAL_IDENTIFIER);
+			colNo += errMsg.size();
+		}
+		// M
+		{
+			correctip();
+			if(!myStr2UInt(errMsg, M)) return parseError(ILLEGAL_NUM);
+			colNo += errMsg.size();
+		}
+		//I
+		{
+			correctip();
+			if(!myStr2UInt(errMsg, I)) return parseError(ILLEGAL_NUM);
+			colNo += errMsg.size();
+		}
+		//L
+		{
+			correctip();
+			if(!myStr2UInt(errMsg, L)) return parseError(ILLEGAL_NUM);
+			colNo += errMsg.size();
+		}
+		//O
+		{
+			correctip();
+			if(!myStr2UInt(errMsg, O)) return parseError(ILLEGAL_NUM);
+			colNo += errMsg.size();
+		}
+		//A
+		{
+			correctip();
+			if(!myStr2UInt(errMsg, A)) return parseError(ILLEGAL_NUM);
+			colNo += errMsg.size();
+		}
+		if( M < (I+L+A) ){
+			errMsg = "M";
+			errInt = M;
+			return parseError(NUM_TOO_SMALL);
+		}
+		_AIGNum = A;
+	}
+		//PIs
+		for(unsigned i=0;i<I;i++){
+			newline();
+			if(ifs.eof()){
+				errMsg = "PI";
+				return parseError(MISSING_DEF);
+			}
+			getline(ifs,errMsg);
+			if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
+			if(errInt%2) return parseError(ILLEGAL_NUM);
+			if(errInt > 2*M){
+				errMsg = "PI index";
+				return parseError(NUM_TOO_BIG);
+			}
+			if(errInt == 0) return parseError(REDEF_CONST);
+			//prevent redefinition
+			for(unsigned j=0;j<PiList.size();j++)
+				if( (errInt>>1) == PiList[j]){ 
+					errGate = new PIGate(j+2, PiList[j]);
+					return parseError(REDEF_GATE);
+				}
+			//store variableID
+			PiList.push_back(errInt>>1);
+			colNo += errMsg.size();
+		}
+		
+		//POs
+		for(unsigned i=0; i<O; i++){
+			newline();
+			if(ifs.eof()){
+				errMsg = "PO";
+				return parseError(MISSING_DEF);
+			}
+			getline(ifs,errMsg);
+			if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
+			if((errInt>>1) > M) return parseError(MAX_LIT_ID);
+			pofaninList.push_back(errInt);
+			colNo += errMsg.size();
+		}
+		
+		//AIGs
+		for(unsigned i=0; i<A ; i++){
+			newline();
+			if(ifs.eof()){
+				errMsg = "AIG";
+				return parseError(MISSING_DEF);
+			}
+			getline(ifs,temp);
+			ss << temp;
+			ss >> errMsg;
+			
+			//AND gate variable ID
+			if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
+			if(errInt%2) return parseError(ILLEGAL_NUM);
+			if((errInt>>1) > M) return parseError(MAX_LIT_ID);
+			if(errInt == 0) return parseError(REDEF_CONST);
+			for(unsigned j=0;j<PiList.size();j++)
+				if( (errInt>>1) == PiList[j]){ 
+					errGate = new PIGate(j+2, PiList[j]);
+					return parseError(REDEF_GATE);
+				}
+			for(unsigned j=0; j<AigList.size(); j++)
+				if( (errInt>>1) == AigList[j] ){
+					errGate = new AIGGate(I+O+j+2,AigList[j],0,0);
+					return parseError(REDEF_GATE);
+				}
+			AigList.push_back(errInt>>1);
+			colNo += errMsg.size();
+			
+			//fanin1
+			correctip();
+			if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
+			if((errInt>>1) > M) return parseError(MAX_LIT_ID);
+			aigfanin1List.push_back(errInt);
+			colNo += errMsg.size();
+			
+			//fanin2
+			correctip();
+			if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
+			if((errInt>>1) > M) return parseError(MAX_LIT_ID);
+			aigfanin2List.push_back(errInt);
+			colNo += errMsg.size();
+		}
+	
+	return true;
+}  
+
 
 /**********************************************************/
 /*   class CirMgr member functions for circuit printing   */
@@ -189,6 +369,9 @@ CirMgr::printPOs() const
    cout << "POs of the circuit:";
    cout << endl;
 }
+
+//Gates with floating fanin(s): 
+//Gates defined but not used : 
 
 void
 CirMgr::printFloatGates() const

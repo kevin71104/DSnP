@@ -18,6 +18,8 @@
 using namespace std;
 
 extern CirMgr *cirMgr;
+unsigned CirGate::	_globalRef = 0;
+GateList CirMgr:: 	_GateList;
 
 // TODO: Implement memeber functions for class(es) in cirGate.h
 

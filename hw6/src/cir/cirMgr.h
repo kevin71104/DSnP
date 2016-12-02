@@ -18,7 +18,7 @@ using namespace std;
 
 #include "cirDef.h"
 
-extern CirMgr *cirMgr;
+extern	CirMgr*		cirMgr;
 
 // TODO: Define your own data members and member functions
 class CirMgr
@@ -41,8 +41,15 @@ public:
    void printPOs() const;
    void printFloatGates() const;
    void writeAag(ostream&) const;
-
+   void setGateList(size_t size) { _GateList.reserve(size); _GateList.resize(size); }
+	
+	static GateList	_GateList;
+	
 private:
+	IdList 				PiList;
+	IdList				PoList;
+	size_t				_AIGNum;		//the number of AIGgates
+
 };
 
 #endif // CIR_MGR_H
