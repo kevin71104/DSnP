@@ -1,0 +1,52 @@
+cirr test1.aag -replace
+cirp -n
+USAGE
+cirp -fl
+USAGE
+cirp -s
+USAGE
+cirp -pi
+USAGE
+cirp -po
+USAGE
+cirg 5
+USAGE
+cirg 0 -fano 4
+USAGE
+cirg 1 -fano 3
+USAGE
+cirg 8 -fani 3
+USAGE
+cirg 6 -fano 3
+USAGE
+cirg 12 -fani 3
+USAGE
+cirg 12 -fani 4
+USAGE
+cirr test2.aag -replace
+cirp -n
+USAGE
+cirp -fl
+USAGE
+cirp -s
+USAGE
+cirp -pi
+USAGE
+cirp -po
+USAGE
+cirg 5
+USAGE
+cirg 0 -fano 4
+USAGE
+cirg 1 -fano 3
+USAGE
+cirg 8 -fani 3
+USAGE
+cirg 6 -fano 3
+USAGE
+cirg 12 -fani 3
+USAGE
+cirg 12 -fani 4
+USAGE
+q -f
+

@@ -1,0 +1,156 @@
+cirr C17.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGEcirr C432.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C432_r.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C499.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C499_r.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C880.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C1335.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C1908.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C3540.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C5315.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C6288.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+cirr C7552.aag -r
+USAGE
+cirp -s
+cirp -n
+cirp -pi
+cirp -po
+cirp -fl
+cirg 12 -fani 3
+cirg 6 -fano 3
+cirg 2 -fano 6
+cirg 14 -fani 6
+cirg 13
+USAGE
+q -f

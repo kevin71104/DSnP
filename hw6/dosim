@@ -1,0 +1,153 @@
+cirr sim01.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim02.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim03.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim04.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim05.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim06.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim07.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim08.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim09.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim10.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim11.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim12.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim13.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim14.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+cirr sim15.aag -replace
+cirp -n
+cirp -fl
+cirg 0 -fano 4
+cirg 1 -fano 3
+cirg 8 -fani 3
+cirg 6 -fano 3
+cirg 12 -fani 3
+cirg 12 -fani 4
+cirw
+USAGE
+q -f
+

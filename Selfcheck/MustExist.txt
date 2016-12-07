@@ -1,4 +1,5 @@
-_hw5/src/util/array.h
-_hw5/src/util/bst.h
-_hw5/src/util/dlist.h
-_hw5/adtComp.pdf
+_hw6/src/cir/cirMgr.h
+_hw6/src/cir/cirMgr.cpp
+_hw6/src/cir/cirGate.h
+_hw6/src/cir/cirGate.cpp
+_hw6/src/cir/make.cir

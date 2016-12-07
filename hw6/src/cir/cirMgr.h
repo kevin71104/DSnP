@@ -25,11 +25,15 @@ class CirMgr
 {
 public:
    CirMgr(){}
-   ~CirMgr() {}
+   //release memory
+   ~CirMgr() { 
+		resetList();
+	   _GateList.clear();
+	}
 
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
-   CirGate* getGate(unsigned gid) const { return 0; }
+   CirGate* getGate(unsigned gid) const;
 
    // Member functions about circuit construction
    bool readCircuit(const string&);
@@ -41,14 +45,16 @@ public:
    void printPOs() const;
    void printFloatGates() const;
    void writeAag(ostream&) const;
-   void setGateList(size_t size) { _GateList.reserve(size); _GateList.resize(size); }
+   void setGateList(size_t size) { _GateList.reserve(size); }
 	
 	static GateList	_GateList;
 	
 private:
-	IdList 				PiList;
-	IdList				PoList;
+	IdList 				PiList;		//storing PIGate's variable ID
+	IdList				PoList;		//storing POGate's variable ID
 	size_t				_AIGNum;		//the number of AIGgates
+	
+	void resetList(){for(size_t i=0; i<_GateList.size(); i++) delete _GateList[i];}
 
 };
 

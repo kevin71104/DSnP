@@ -1,0 +1,63 @@
+cirr sim01.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim02.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim03.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim04.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim05.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim06.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim07.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim08.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim09.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim10.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim11.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim12.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim13.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim14.aag -replace
+cirp -n
+cirp -fl
+cirw
+cirr sim15.aag -replace
+cirp -n
+cirp -fl
+cirw
+USAGE
+q -f
+

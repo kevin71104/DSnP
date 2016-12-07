@@ -1,0 +1,87 @@
+cirr ok01.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok02.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok03.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok04.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok05.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok06.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok07.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok08.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok09.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok10.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr ok11.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+cirr good.aag -replace
+cirp -n
+cirp -fl
+cirp -s
+cirg
+cirg 3 -fano 3
+cirg 5 -fani 3
+USAGE
+q -f
+
