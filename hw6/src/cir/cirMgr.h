@@ -45,8 +45,23 @@ public:
    void printPOs() const;
    void printFloatGates() const;
    void writeAag(ostream&) const;
+<<<<<<< HEAD
    void setGateList(size_t size) { _GateList.reserve(size); }
 	
+=======
+   void setGateList(size_t size) { _GateList.reserve(size); _GateList.resize(size); }
+<<<<<<< HEAD
+	
+	static GateList	_GateList;
+	
+private:
+	IdList 				PiList;
+	IdList				PoList;
+	size_t				_AIGNum;		//the number of AIGgates
+
+=======
+
+>>>>>>> 6883550f17dca316a0f50d4d96282c5dcdc0d1e5
 	static GateList	_GateList;
 	
 private:
@@ -54,8 +69,12 @@ private:
 	IdList				PoList;		//storing POGate's variable ID
 	size_t				_AIGNum;		//the number of AIGgates
 	
+<<<<<<< HEAD
 	void resetList(){for(size_t i=0; i<_GateList.size(); i++) delete _GateList[i];}
 
+=======
+>>>>>>> 393d561f9dd6f43be0bea6c73b1b03b182a01d13
+>>>>>>> 6883550f17dca316a0f50d4d96282c5dcdc0d1e5
 };
 
 #endif // CIR_MGR_H
