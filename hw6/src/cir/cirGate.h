@@ -29,7 +29,7 @@ class CirGate
 	//friend class CirMgr;
 public:
 	 CirGate(unsigned lineNum, GateType name, unsigned ID)
-		: line(lineNum), gateType(name), gateId(ID){}
+		: line(lineNum), gateId(ID), gateType(name){}
 	 virtual ~CirGate() {}
 
 	 // Basic access methods
@@ -52,42 +52,42 @@ public:
 	}
 
 	//pure virtual function, dereived class should implement it
-	virtual void printGate(unsigned& lineNum) const = 0;
 	virtual void reportGate() const=0;
+	virtual void printGate(unsigned& lineNum) const = 0;
 	virtual void printFanin (const int& totallevel, int nowlevel, bool inverted = false) const=0;
 	virtual void printFanout (const int& totallevel, int nowlevel, bool inverted = false) const=0;
 
 	//virtual function
 	virtual void 		DFS(ostringstream& oss, unsigned& A) const{}
 	virtual void 		printSymbol() const{}
-	virtual unsigned	getFanin1() const{return 0;}
-	virtual unsigned	getFanin2() const{return 0;}
-	virtual string		getSymbol() const{return "";}
-	virtual IdList		getFanout() const{return IdList();}
 	virtual void 		setSymbol(const string& str){}
 	virtual void 		setFanout(const IdList& Fanout){}
 	virtual void 		addFanout(unsigned Id){}
+	virtual IdList		getFanout() const{return IdList();}
+	virtual string		getSymbol() const{return "";}
+	virtual unsigned	getFanin1() const{return 0;}
+	virtual unsigned	getFanin2() const{return 0;}
 
 	//getting functions
-	unsigned	getLineNo() const { return line; }
-	GateType	getType()   const { return gateType; }
 	unsigned	getId()     const { return gateId; }
+	GateType	getType()   const { return gateType; }
+	unsigned	getLineNo() const { return line; }
 
 	// Printing functions
-	void reportFanin(int level) const ;
-	void reportFanout(int level) const ;
+	void 	reportFanin(int level) const ;
+	void 	reportFanout(int level) const ;
 
 	//for DFS
-	static void setGlobalRef()   { ++ _globalRef; }
-	void setToGlobalRef() const  { _ref = _globalRef; }
 	bool isGlobalRef() const     { return ( _ref == _globalRef); }
+	void setToGlobalRef() const  { _ref = _globalRef; }
+	static void setGlobalRef()   { ++ _globalRef; }
 
 protected:
-	unsigned              	line;       	//which line define this gate
-	GateType               	gateType;
-	unsigned              	gateId;       	//variable ID i.e.( >>1 = /2 )
-	static unsigned         _globalRef;
-	mutable unsigned        _ref;
+	unsigned			line;       	//which line define this gate
+	unsigned			gateId;       	//variable ID i.e.( >>1 = /2 )
+	GateType			gateType;
+	static unsigned		_globalRef;
+	mutable unsigned	_ref;			//can be altered in const functions
 
 };
 
@@ -109,13 +109,20 @@ public:
 	UNDEFGate(unsigned id)
 		:CirGate(0, UNDEF_GATE, id) {}
 	~UNDEFGate() {}
+
+	//printing functions
 	void 	printGate(unsigned& lineNum) const {}
-	IdList	getFanout() const { return _fanout; }
-	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
-	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
-	void 	reportGate() const;
 	void 	printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
 	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+	void 	reportGate() const;
+
+	//getting functions
+	IdList	getFanout() const { return _fanout; }
+
+	//setting functions
+	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
+	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
+
 private:
 	IdList	_fanout;	//if inverted to o/p gate's input,store o/p gate's variableId*2+1
 };
@@ -126,16 +133,23 @@ public:
 	PIGate(unsigned line, unsigned id )
 		:CirGate(line, PI_GATE, id) {}
 	~PIGate() {}
+
+	//printing functions
+	void 	reportGate() const;
 	void 	printGate(unsigned& lineNum) const ;
 	void 	printSymbol() const { if(symbol != "") cout<<" ("<<symbol<<")"; cout<<"\n"; }
+	void 	printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
+	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+
+	//getting functions
 	string	getSymbol() const { return symbol; }
 	IdList	getFanout() const { return _fanout; }
+
+	//setting functions
 	void 	setSymbol(const string& str){ symbol = str; }
 	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
 	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
-	void 	reportGate() const;
-	void 	printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
-	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+
 private:
 	IdList	_fanout;	//if inverted to o/p gate's input,store o/p gate's variableId*2+1
 	string	symbol;
@@ -147,15 +161,22 @@ public:
 	POGate(unsigned line, unsigned id, unsigned ip1)
 		:CirGate(line, PO_GATE, id), _fanin1(ip1) {}
 	~POGate() {}
-	void 		printGate(unsigned& lineNum) const ;
+
+	//printing functions
+	void 	reportGate() const;
+	void 	printGate(unsigned& lineNum) const ;
+	void 	printSymbol() const { if(symbol != "") cout<<" ("<<symbol<<")"; cout<<"\n"; }
+	void 	printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
+	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+
+	//getting functions
 	void 		DFS(ostringstream& oss, unsigned& A) const ;
-	void 		printSymbol() const { if(symbol != "") cout<<" ("<<symbol<<")"; cout<<"\n"; }
-	unsigned	getFanin1() const { return _fanin1; }
 	string		getSymbol() const { return symbol; }
-	void 		setSymbol(const string& str){ symbol = str; }
-	void 		reportGate() const;
-	void 		printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
-	void 		printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+	unsigned	getFanin1() const { return _fanin1; }
+
+	//setting functions
+	void 	setSymbol(const string& str){ symbol = str; }
+
 private:
 	string		symbol;
 	unsigned	_fanin1;	//literal ID
@@ -167,16 +188,23 @@ public:
 	AIGGate(unsigned line, unsigned id, unsigned ip1, unsigned ip2 )
 		:CirGate(line, AIG_GATE, id), _fanin1(ip1), _fanin2(ip2) {}
 	~AIGGate() {}
-	void 		printGate(unsigned& lineNum) const ;
+
+	//printing functions
+	void 	reportGate() const;
+	void 	printGate(unsigned& lineNum) const ;
+	void 	printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
+	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+
+	//getting functions
 	void 		DFS(ostringstream& oss, unsigned& A) const ;
+	IdList		getFanout() const { return _fanout; }
 	unsigned	getFanin1() const { return _fanin1; }
 	unsigned	getFanin2() const { return _fanin2; }
-	IdList		getFanout() const { return _fanout; }
-	void 		setFanout(const IdList& Fanout) { _fanout = Fanout; }
-	void 		addFanout(unsigned Id) { _fanout.push_back(Id); }
-	void 		reportGate() const;
-	void 		printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
-	void 		printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+
+	//setting functions
+	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
+	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
+
 private:
 	IdList		_fanout;	//if inverted to o/p gate's input,store o/p gate's variableId*2+1
 	unsigned	_fanin1;    //literal ID
@@ -189,13 +217,20 @@ public:
 	CONSTGate()
 		:CirGate(0, CONST_GATE, 0) {}
 	~CONSTGate() {}
-	void 	printGate(unsigned& lineNum) const ;
-	IdList	getFanout() const { return _fanout; }
-	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
-	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
+
+	//printing functions
 	void 	reportGate() const;
+	void 	printGate(unsigned& lineNum) const ;
 	void 	printFanin (const int& totallevel, int nowlevel, bool inverted = false) const;
 	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
+
+	//getting functions
+	IdList	getFanout() const { return _fanout; }
+
+	//setting functions
+	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
+	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
+
 private:
 	IdList		_fanout;	//if inverted to o/p gate's input,store o/p gate's variableId*2+1
 };

@@ -42,17 +42,16 @@ public:
     void printPOs() const;
     void printFloatGates() const;
     void writeAag(ostream&) const;
-    void setGateList(size_t size) { _GateList.reserve(size); }
 
+    void setGateList(size_t size) { _GateList.reserve(size); }
     static GateList	_GateList;
 
 private:
-    IdList 				PiList;		//storing PIGate's variable ID
-	IdList				PoList;		//storing POGate's variable ID
-	size_t				_AIGNum;		//the number of AIGgates
+    IdList     PiList;     //storing PIGate's variable ID
+	IdList     PoList;     //storing POGate's variable ID
+	size_t     _AIGNum;	   //the number of AIGgates
 
 	void resetList(){for(size_t i=0; i<_GateList.size(); i++) delete _GateList[i];}
-
 };
 
 #endif // CIR_MGR_H
