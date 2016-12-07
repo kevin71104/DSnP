@@ -29,16 +29,16 @@ cir> cirr err10.aag
 [ERROR] Line 1, Col 10: Missing space character!!
 
 cir> cirr err11.aag
-[ERROR] Line 1: Number of variables is too small (3)!!
+[ERROR] Line 1, Col 14: A new line is expected here!!
 
 cir> cirr err12.aag
-[ERROR] Line 1: Number of variables is too small (3)!!
+[ERROR] Line 1, Col 14: A new line is expected here!!
 
 cir> cirr err13.aag
 [ERROR] Line 1: Number of variables is too small (3)!!
 
 cir> cirr err14.aag
-[ERROR] Line 1: Illegal Latches!!
+[ERROR] Line 1: Illegal latches!!
 
 cir> cirr err15.aag
 [ERROR] Line 2: Missing PI definition!!
