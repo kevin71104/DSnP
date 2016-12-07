@@ -1,9 +1,9 @@
 /****************************************************************************
-  FileName     [ cirGate.h ]
-  PackageName  [ cir ]
-  Synopsis     [ Define basic gate data structures ]
-  Author       [ Chung-Yang (Ric) Huang ]
-  Copyright    [ Copyleft(c) 2008-present LaDs(III), GIEE, NTU, Taiwan ]
+	FileName     [ cirGate.h ]
+	PackageName  [ cir ]
+	Synopsis     [ Define basic gate data structures ]
+	Author       [ Chung-Yang (Ric) Huang ]
+	Copyright    [ Copyleft(c) 2008-present LaDs(III), GIEE, NTU, Taiwan ]
 ****************************************************************************/
 
 #ifndef CIR_GATE_H
@@ -28,68 +28,68 @@ class CirGate
 {
 	//friend class CirMgr;
 public:
-   CirGate(unsigned lineNum, GateType name, unsigned ID, unsigned ip1 = UINT_MAX, unsigned ip2 = UINT_MAX )
-		: line(lineNum), gateType(name), gateId(ID), _fanin1(ip1), _fanin2(ip2), _ref(0) {}
-   virtual ~CirGate() {}
+	 CirGate(unsigned lineNum, GateType name, unsigned ID, unsigned IP1 = UINT_MAX, unsigned IP2 = UINT_MAX)
+		: line(lineNum), gateType(name), gateId(ID), _fanin1(IP1), _fanin2(IP2){}
+	 virtual ~CirGate() {}
 
-   // Basic access methods
-   string getTypeStr() const { 
+	 // Basic access methods
+	 string getTypeStr() const {
 		switch(gateType){
-			case	UNDEF_GATE:
-				return	"UNDEF";
-			case	PI_GATE:
-				return	"PI";
-			case	PO_GATE:
-				return	"PO";
-			case	AIG_GATE:
-				return	"AIG";
-			case	CONST_GATE:
-				return	"CONST";	
+			case  UNDEF_GATE:
+				return  "UNDEF";
+			case  PI_GATE:
+				return  "PI";
+			case  PO_GATE:
+				return  "PO";
+			case  AIG_GATE:
+				return  "AIG";
+			case  CONST_GATE:
+				return  "CONST";
 			case TOT_GATE:
-            return "";		
+				return "";
 		}
 		return "";
 	}
-	
+
 	void setSymbol(const string& str){ symbol = str; }
 	void setFanout(const IdList& Fanout) { _fanout = Fanout; }
 	void addFanout(unsigned Id) { _fanout.push_back(Id); }
-	
-   unsigned getLineNo() const { return line; }
-   GateType getType() 	const { return gateType; }
-   unsigned getFanin1() const { return _fanin1; }
-   unsigned getFanin2() const { return _fanin2; }
-   unsigned getId() 		const { return gateId; }
-   string 	getSymbol() const { return symbol; }
-   IdList	getFanout() const { return _fanout; }
-   
-   // Printing functions
-   //pure virtual function, dereived class should implement it 
-   virtual void printGate(unsigned& lineNum) const = 0;
-   virtual void DFS(ostringstream& oss, unsigned& A) const {}
-   void reportGate() const;
-   void reportFanin(int level) const; 
-   void reportFanout(int level) const;
-   void printSymbol() const { if(symbol != "") cout<<" ("<<symbol<<")"; cout<<"\n"; }
-   
-   //for DFS
-	static void setGlobalRef() 	{ ++ _globalRef; }
-	void setToGlobalRef() const	{ _ref = _globalRef; }
-	bool isGlobalRef() const 		{ return ( _ref == _globalRef); }
-	
+
+	unsigned getLineNo() const { return line; }
+	GateType getType()   const { return gateType; }
+	unsigned getId()     const { return gateId; }
+	unsigned getFanin1() const { return _fanin1; }
+	unsigned getFanin2() const { return _fanin2; }
+	string   getSymbol() const { return symbol; }
+	IdList  getFanout() const { return _fanout; }
+
+	// Printing functions
+	//pure virtual function, dereived class should implement it
+	virtual void printGate(unsigned& lineNum) const = 0;
+	virtual void DFS(ostringstream& oss, unsigned& A) const {}
+	void reportGate() const;
+	void reportFanin(int level) const;
+	void reportFanout(int level) const;
+	void printSymbol() const { if(symbol != "") cout<<" ("<<symbol<<")"; cout<<"\n"; }
+
+	//for DFS
+	static void setGlobalRef()   { ++ _globalRef; }
+	void setToGlobalRef() const  { _ref = _globalRef; }
+	bool isGlobalRef() const     { return ( _ref == _globalRef); }
+
 protected:
-	unsigned							line;					//which line define this gate
-	GateType	 						gateType;
-	unsigned							gateId;				//variable ID i.e.( >>1 = /2 )
-   unsigned							_fanin1;				//literal ID 
-   unsigned							_fanin2;				//literal ID 
-   string 							symbol; 
-   IdList							_fanout;				//if inverted to o/p gate's input,store o/p gate's variableId*2+1
-   static unsigned 				_globalRef;
-   mutable unsigned				_ref;
+	unsigned              	line;       	//which line define this gate
+	GateType               	gateType;
+	unsigned              	gateId;       	//variable ID i.e.( >>1 = /2 )
+	unsigned				_fanin1;        //literal ID
+	unsigned				_fanin2;        //literal ID
+	string               	symbol;
+	IdList              	_fanout;        //if inverted to o/p gate's input,store o/p gate's variableId*2+1
+	static unsigned         _globalRef;
+	mutable unsigned        _ref;
 
 	void printFanin (const int& totallevel, int nowlevel, bool inverted = false) const ;
-	void printFanout (const int& totallevel, int nowlevel, bool inverted = false) const ; 
+	void printFanout (const int& totallevel, int nowlevel, bool inverted = false) const ;
 };
 /*
 class CirGateV
@@ -99,7 +99,7 @@ class CirGateV
 	CirGateV(size_t ref):_gateV(ref){}
 	CirGate* gate() const { return (AIGGate*)(_gateV & ~size_t(NEG)); }
 	bool isInv() const { return (_gateV & NEG); }
-	size_t		_gateV;
+	size_t    _gateV;
 };
 */
 class UNDEFGate : public CirGate
@@ -146,7 +146,7 @@ public:
 	CONSTGate()
 		:CirGate(0, CONST_GATE, 0) {}
 	~CONSTGate() {}
-	void printGate(unsigned& lineNum) const ;	
+	void printGate(unsigned& lineNum) const ;
 };
 
 #endif // CIR_GATE_H

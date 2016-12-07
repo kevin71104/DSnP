@@ -24,33 +24,33 @@ extern	CirMgr*		cirMgr;
 class CirMgr
 {
 public:
-   CirMgr(){}
-   //release memory
-   ~CirMgr() { resetList(); _GateList.clear();}
+    CirMgr(){}
+    //release memory
+    ~CirMgr() { resetList(); _GateList.clear();}
 
-   // Access functions
-   // return '0' if "gid" corresponds to an undefined gate.
-   CirGate* getGate(unsigned gid) const;
+    // Access functions
+    // return '0' if "gid" corresponds to an undefined gate.
+    CirGate* getGate(unsigned gid) const;
 
-   // Member functions about circuit construction
-   bool readCircuit(const string&);
+    // Member functions about circuit construction
+    bool readCircuit(const string&);
 
-   // Member functions about circuit reporting
-   void printSummary() const;
-   void printNetlist() const;
-   void printPIs() const;
-   void printPOs() const;
-   void printFloatGates() const;
-   void writeAag(ostream&) const;
-   void setGateList(size_t size) { _GateList.reserve(size); }
-	
-	static GateList	_GateList;
-	
+    // Member functions about circuit reporting
+    void printSummary() const;
+    void printNetlist() const;
+    void printPIs() const;
+    void printPOs() const;
+    void printFloatGates() const;
+    void writeAag(ostream&) const;
+    void setGateList(size_t size) { _GateList.reserve(size); }
+
+    static GateList	_GateList;
+
 private:
-	IdList 				PiList;		//storing PIGate's variable ID
+    IdList 				PiList;		//storing PIGate's variable ID
 	IdList				PoList;		//storing POGate's variable ID
 	size_t				_AIGNum;		//the number of AIGgates
-	
+
 	void resetList(){for(size_t i=0; i<_GateList.size(); i++) delete _GateList[i];}
 
 };
