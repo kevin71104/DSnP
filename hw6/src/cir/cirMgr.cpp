@@ -65,8 +65,8 @@ static CirGate *errGate;
 static bool
 parseError(CirParseError err)
 {
-	//ostream& os = cerr;
-	ostream& os = cout ;
+	ostream& os = cerr;
+	//ostream& os = cout ;
    switch (err) {
       case EXTRA_SPACE:
          os	<< "[ERROR] Line " << lineNo+1 << ", Col " << colNo+1
@@ -199,7 +199,7 @@ CirMgr::readCircuit(const string& fileName)
 {
 	ifstream ifs(fileName.c_str());
    if (!ifs) {
-      cout << "Error: \"" << fileName << "\" does not exist!!" << endl;
+      cerr << "Error: \"" << fileName << "\" does not exist!!" << endl;
       return false;
    }
    
@@ -295,7 +295,8 @@ CirMgr::readCircuit(const string& fileName)
 			return parseError(ILLEGAL_NUM);
 		}
 		colNo += errMsg.size();
-			
+		if(!ss.eof()) return parseError(MISSING_NEWLINE);
+		
 		if( M < (I+L+A) ){
 			errMsg = "Number of variables";
 			errInt = M;
