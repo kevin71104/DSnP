@@ -27,13 +27,59 @@ GateList CirMgr :: _GateList;
 /**************************************/
 /*   class CirGate member functions   */
 /**************************************/
+
 void
-CirGate::reportGate() const
+UNDEFGate::reportGate() const
+{
+	cout << setfill('=') << setw(51) << '\n';
+	ostringstream oss;
+	oss << "= " << this->getTypeStr() << "(" << gateId << ")";
+	oss << ", line " << line;
+	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
+}
+
+void
+PIGate::reportGate() const
 {
 	cout << setfill('=') << setw(51) << '\n';
 	ostringstream oss;
 	oss << "= " << this->getTypeStr() << "(" << gateId << ")";
 	if(symbol != "") oss << "\"" << symbol << "\"";
+	oss << ", line " << line;
+	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
+}
+
+void
+POGate::reportGate() const
+{
+	cout << setfill('=') << setw(51) << '\n';
+	ostringstream oss;
+	oss << "= " << this->getTypeStr() << "(" << gateId << ")";
+	if(symbol != "") oss << "\"" << symbol << "\"";
+	oss << ", line " << line;
+	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
+}
+
+void
+AIGGate::reportGate() const
+{
+	cout << setfill('=') << setw(51) << '\n';
+	ostringstream oss;
+	oss << "= " << this->getTypeStr() << "(" << gateId << ")";
+	oss << ", line " << line;
+	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
+}
+
+void
+CONSTGate::reportGate() const
+{
+	cout << setfill('=') << setw(51) << '\n';
+	ostringstream oss;
+	oss << "= " << this->getTypeStr() << "(" << gateId << ")";
 	oss << ", line " << line;
 	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
 	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
@@ -51,38 +97,85 @@ CirGate::reportFanin(int level) const
 	printFanin(Level,0);
 }
 
+// UNDEF_GATE ||  PI_GATE || CONST_GATE no fanin
 void
-CirGate::printFanin(const int& totallevel, int nowlevel, bool inverted) const
-{	
+UNDEFGate::printFanin(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId << '\n';
+}
+
+void
+PIGate::printFanin(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId << '\n';
+}
+
+void
+CONSTGate::printFanin(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId << '\n';
+}
+
+void
+POGate::printFanin(const int& totallevel, int nowlevel, bool inverted) const
+{
 	if(nowlevel != 0)
 		cout<<setw(2*nowlevel)<<' ';
 	if(inverted)
 		cout<<'!';
 	cout << this->getTypeStr() << " " << gateId ;
-	// UNDEF_GATE ||  PI_GATE || CONST_GATE no fanin
-	if(nowlevel == totallevel || gateType == UNDEF_GATE || gateType == PI_GATE || gateType == CONST_GATE){
+	if(nowlevel == totallevel){
 		cout << "\n";
 		return;
 	}
 	//if has printed this gate's fanin(s) and have to print cout << (*)
 	if(isGlobalRef()){
-			cout << " (*)\n";
-			return;
+		cout << " (*)\n";
+		return;
 	}
 	cout << "\n";
 	this->setToGlobalRef();
-	
-	if( gateType == PO_GATE){
-		//literalId
-		CirGate* fGate1 = cirMgr->_GateList[_fanin1>>1];
-		fGate1->printFanin(totallevel, nowlevel+1, _fanin1%2);
+	//literalId
+	CirGate* fGate1 = cirMgr->_GateList[_fanin1>>1];
+	fGate1->printFanin(totallevel, nowlevel+1, _fanin1%2);
+}
+
+void
+AIGGate::printFanin(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId ;
+	if(nowlevel == totallevel){
+		cout << "\n";
+		return;
 	}
-	else if( gateType == AIG_GATE){
-		CirGate* fGate1 = cirMgr->_GateList[_fanin1>>1];
-		CirGate* fGate2 = cirMgr->_GateList[_fanin2>>1];
-		fGate1->printFanin(totallevel,nowlevel+1, _fanin1%2);
-		fGate2->printFanin(totallevel,nowlevel+1, _fanin2%2);		
+	//if has printed this gate's fanin(s) and have to print cout << (*)
+	if(isGlobalRef()){
+		cout << " (*)\n";
+		return;
 	}
+	cout << "\n";
+	this->setToGlobalRef();
+
+	CirGate* fGate1 = cirMgr->_GateList[_fanin1>>1];
+	CirGate* fGate2 = cirMgr->_GateList[_fanin2>>1];
+	fGate1->printFanin(totallevel,nowlevel+1, _fanin1%2);
+	fGate2->printFanin(totallevel,nowlevel+1, _fanin2%2);
 }
 
 void
@@ -97,16 +190,26 @@ CirGate::reportFanout(int level) const
 	printFanout(Level,0);
 }
 
-void 
-CirGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const 
+//POGate no fanout
+void
+POGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId << '\n';
+}
+
+void
+PIGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const
 {
 	if(nowlevel != 0)
 		cout<<setw(2*nowlevel)<<' ';
 	if(inverted)
 		cout<<'!';
 	cout << this->getTypeStr() << " " << gateId ;
-	// PO_GATE no fanout
-	if(nowlevel == totallevel || gateType == PO_GATE){
+	if(nowlevel == totallevel){
 		cout << "\n";
 		return;
 	}
@@ -117,7 +220,88 @@ CirGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const
 	}
 	cout << "\n";
 	this->setToGlobalRef();
-	
+
+	for(size_t i=0; i<_fanout.size(); i++){
+		unsigned opId = _fanout[i]>>1 ;
+		CirGate* opGate = cirMgr->_GateList[opId];
+		opGate->printFanout(totallevel, nowlevel+1, _fanout[i]%2);
+	}
+}
+
+void
+UNDEFGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId ;
+	if(nowlevel == totallevel){
+		cout << "\n";
+		return;
+	}
+	//if has printed this gate's fanin(s) and this gate have fanins cout << (*)
+	if(isGlobalRef() && !_fanout.empty()){
+		cout << " (*)\n";
+		return;
+	}
+	cout << "\n";
+	this->setToGlobalRef();
+
+	for(size_t i=0; i<_fanout.size(); i++){
+		unsigned opId = _fanout[i]>>1 ;
+		CirGate* opGate = cirMgr->_GateList[opId];
+		opGate->printFanout(totallevel, nowlevel+1, _fanout[i]%2);
+	}
+}
+
+void
+AIGGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId ;
+	if(nowlevel == totallevel){
+		cout << "\n";
+		return;
+	}
+	//if has printed this gate's fanin(s) and this gate have fanins cout << (*)
+	if(isGlobalRef() && !_fanout.empty()){
+		cout << " (*)\n";
+		return;
+	}
+	cout << "\n";
+	this->setToGlobalRef();
+
+	for(size_t i=0; i<_fanout.size(); i++){
+		unsigned opId = _fanout[i]>>1 ;
+		CirGate* opGate = cirMgr->_GateList[opId];
+		opGate->printFanout(totallevel, nowlevel+1, _fanout[i]%2);
+	}
+}
+
+void
+CONSTGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const
+{
+	if(nowlevel != 0)
+		cout<<setw(2*nowlevel)<<' ';
+	if(inverted)
+		cout<<'!';
+	cout << this->getTypeStr() << " " << gateId ;
+	if(nowlevel == totallevel){
+		cout << "\n";
+		return;
+	}
+	//if has printed this gate's fanin(s) and this gate have fanins cout << (*)
+	if(isGlobalRef() && !_fanout.empty()){
+		cout << " (*)\n";
+		return;
+	}
+	cout << "\n";
+	this->setToGlobalRef();
+
 	for(size_t i=0; i<_fanout.size(); i++){
 		unsigned opId = _fanout[i]>>1 ;
 		CirGate* opGate = cirMgr->_GateList[opId];
@@ -143,7 +327,7 @@ POGate::printGate(unsigned &lineNum) const
 	unsigned variableId = _fanin1>>1;
 	CirGate* faninGate = cirMgr->_GateList[variableId];
 	faninGate->printGate(lineNum);
-	
+
 	cout<<"["<<lineNum<<"] PO  "<<gateId<<" ";
 	if(faninGate->getType() == UNDEF_GATE) cout<<"*";
 	if(_fanin1 % 2) cout<<"!";
@@ -163,7 +347,7 @@ AIGGate::printGate(unsigned &lineNum) const
 	CirGate* fGate2 = cirMgr->_GateList[fId2];
 	fGate1->printGate(lineNum);
 	fGate2->printGate(lineNum);
-	
+
 	cout<<"["<<lineNum<<"] AIG "<<gateId<<" ";
 	if(fGate1->getType() == UNDEF_GATE) cout<<"*";
 	if(_fanin1 % 2) cout<<"!";
@@ -185,7 +369,7 @@ CONSTGate::printGate(unsigned &lineNum) const
 
 
 void
-POGate::DFS(ostringstream& oss, unsigned& A) const 
+POGate::DFS(ostringstream& oss, unsigned& A) const
 {
 	if(isGlobalRef()) return;
 	setToGlobalRef();
@@ -196,7 +380,7 @@ POGate::DFS(ostringstream& oss, unsigned& A) const
 }
 
 void
-AIGGate::DFS(ostringstream& oss, unsigned& A) const 
+AIGGate::DFS(ostringstream& oss, unsigned& A) const
 {
 	if(isGlobalRef()) return;
 	setToGlobalRef();
