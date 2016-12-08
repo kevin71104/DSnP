@@ -184,11 +184,11 @@ myStr2UInt(const string& str, unsigned& num)
 
 CirGate*
 CirMgr::getGate(unsigned gid) const
-{ 
-	if (gid >= _GateList.size()) 
+{
+	if (gid >= _GateList.size())
 		return 0;
 	CirGate* gate = _GateList[gid];
-	if(gate->getType() == UNDEF_GATE) 
+	if(gate->getType() == UNDEF_GATE)
 		return 0;
 	else return gate;
 }
@@ -202,36 +202,35 @@ CirMgr::readCircuit(const string& fileName)
       cerr << "Error: \"" << fileName << "\" does not exist!!" << endl;
       return false;
    }
-   
+
    lineNo = colNo = 0;
    string 				temp;
    unsigned 			M, I, L, O, A;
    stringstream 		ss;
    vector<IdList> 	fanoutList;		//fanoutList[a] : (variableId a) gate's _fanout
-	
+
 	//after read in every line check if there is newline at the end
 	//ss.str("") reset ss and can be inserted later
-	#define 	newline();                    			\
-				if(!ss.eof())                          \
-					return parseError(MISSING_NEWLINE); \
-				++lineNo;                              \
-				colNo = 0;                             \
-				ss.clear();                            \
-				ss.str("");										
-   
-   //check after this has exactly 1 space and followed with a string
-   #define 	correctip();									\
-				if( temp[colNo] != 32 ) 					\
+    #define 	newline();                                 \
+                if(!ss.eof())                              \
+					return parseError(MISSING_NEWLINE);    \
+				++lineNo;                                  \
+				colNo = 0;                                 \
+				ss.clear();                                \
+				ss.str("");
+    //check after this has exactly 1 space and followed with a string
+    #define 	correctip();							\
+				if( temp[colNo] != 32 ) 				\
 					return parseError(MISSING_SPACE);	\
-				colNo++;											\
-				if( temp[colNo] == 32)						\
+				colNo++;								\
+				if( temp[colNo] == 32)					\
 					return parseError(EXTRA_SPACE);		\
-				if(temp[colNo] <= 32){ 						\
+				if(temp[colNo] <= 32){ 					\
 					errMsg = "number of variables";		\
-					return parseError(MISSING_NUM);		\	
-				}													\
+					return parseError(MISSING_NUM);		\
+				}										\
 				ss >> errMsg;
-	//line & col starts at 1, parseError has +1 inside			
+	//line & col starts at 1, parseError has +1 inside
    //header
    {
 		getline(ifs,temp);
@@ -245,10 +244,10 @@ CirMgr::readCircuit(const string& fileName)
 		if( isdigit(errMsg[3]) ) return parseError(MISSING_SPACE);
 		if( errMsg != "aag" ) return parseError(ILLEGAL_IDENTIFIER);
 		if( temp.size() == 3 ){
-			errMsg = "number of variables";		
-			return parseError(MISSING_NUM);		
-		}		
-		
+			errMsg = "number of variables";
+			return parseError(MISSING_NUM);
+		}
+
 
 		// M
 		correctip();
@@ -258,7 +257,7 @@ CirMgr::readCircuit(const string& fileName)
 			return parseError(ILLEGAL_NUM);
 		}
 		colNo += errMsg.size();
-			
+
 		//I
 		correctip();
 		if(!myStr2UInt(errMsg, I)){
@@ -285,7 +284,7 @@ CirMgr::readCircuit(const string& fileName)
 			return parseError(ILLEGAL_NUM);
 		}
 		colNo += errMsg.size();
-			
+
 		//A
 		correctip();
 		//if(!myStr2UInt(errMsg, A)) return parseError(ILLEGAL_NUM);
@@ -296,7 +295,7 @@ CirMgr::readCircuit(const string& fileName)
 		}
 		colNo += errMsg.size();
 		if(!ss.eof()) return parseError(MISSING_NEWLINE);
-		
+
 		if( M < (I+L+A) ){
 			errMsg = "Number of variables";
 			errInt = M;
@@ -305,7 +304,7 @@ CirMgr::readCircuit(const string& fileName)
 		if(L != 0) return parseError(ILLEGAL_LATCHES);
 		_AIGNum = A;
 	}
-	
+
 	//set _GateList, fanoutList
 	//M gates + O output gates + 1 CONST gate
 	_GateList.reserve(M+O+1);
@@ -314,7 +313,7 @@ CirMgr::readCircuit(const string& fileName)
 		_GateList.push_back(new UNDEFGate(i));
 	fanoutList.reserve(M+1);
 	fanoutList.resize(M+1);
-	
+
 	//PIs
 	for(unsigned i=0;i<I;i++){
 		newline();
@@ -329,7 +328,7 @@ CirMgr::readCircuit(const string& fileName)
 		if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
 		if(errInt == 0 || errInt == 1) return parseError(REDEF_CONST);
 		if(errInt%2){
-			errMsg = "PI"; 
+			errMsg = "PI";
 			return parseError(CANNOT_INVERTED);
 		}
 		if(errInt > 2*M) return parseError(MAX_LIT_ID);
@@ -345,7 +344,7 @@ CirMgr::readCircuit(const string& fileName)
 		_GateList[variableId] = new PIGate(i+2,variableId);
 		colNo += errMsg.size();
 	}
-		
+
 	//POs
 	unsigned PoID = M+1;
 	for(unsigned i=0; i<O; i++,PoID++){
@@ -366,7 +365,7 @@ CirMgr::readCircuit(const string& fileName)
 		PoList.push_back(PoID);
 		fanoutList[literalId>>1].push_back((PoID*2+literalId%2));
 	}
-		
+
 	//AIGs
 	for(unsigned i=0; i<A ; i++){
 		newline();
@@ -378,7 +377,7 @@ CirMgr::readCircuit(const string& fileName)
 		if(temp[colNo] == 32) return parseError(EXTRA_SPACE);
 		ss << temp;
 		ss >> errMsg;
-		
+
 		//AND gate variable ID
 		if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
 		if(errInt == 0 || errInt == 1) return parseError(REDEF_CONST);
@@ -394,33 +393,36 @@ CirMgr::readCircuit(const string& fileName)
 			errGate = _GateList[variableId];
 			return parseError(REDEF_GATE);
 		}
-		
+
 		//fanin1
 		correctip();
 		if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
 		if((errInt>>1) > M) return parseError(MAX_LIT_ID);
 		unsigned fanin1 = errInt;
 		colNo += errMsg.size();
-			
+
 		//fanin2
 		correctip();
 		if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_NUM);
 		if((errInt>>1) > M) return parseError(MAX_LIT_ID);
 		unsigned fanin2 = errInt;
 		colNo += errMsg.size();
-		
+
 		delete _GateList[variableId];
 		_GateList[variableId] = new AIGGate(I+O+i+2,variableId,fanin1,fanin2);
 		fanoutList[fanin1>>1].push_back((variableId*2+fanin1%2));
 		fanoutList[fanin2>>1].push_back((variableId*2+fanin2%2));
 	}
-	
+
 	//set fanout
 	//for(size_t i=0; i<M; i++)	_GateList[i]->setFanout();
 	for(size_t i=0; i<fanoutList.size(); i++) ::sort(fanoutList[i].begin(),fanoutList[i].end());
-	for(size_t i=0; i<=M; i++) _GateList[i]->setFanout(fanoutList[i]);
-	
-		//set symbols, ending by line consisting only "c"
+	for(size_t i=0; i<=M; i++){
+        if(_GateList[i]->getType() != PO_GATE)
+            _GateList[i]->setFanout(fanoutList[i]);
+    }
+
+    //set symbols, ending by line consisting only "c"
 	for(size_t i=0;i<I+O+1;i++){
 		newline();
 		getline(ifs, temp);
@@ -442,7 +444,7 @@ CirMgr::readCircuit(const string& fileName)
 			//index
 			errMsg = errMsg.substr(1);
 			if(!myStr2UInt(errMsg,errInt)) return parseError(ILLEGAL_SYMBOL_INDEX);
-			//number starting from 0~(I-1) 
+			//number starting from 0~(I-1)
 			if(errInt >= I){
 				errMsg = "PI index";
 				return parseError(NUM_TOO_BIG);
@@ -453,14 +455,14 @@ CirMgr::readCircuit(const string& fileName)
 			}
 			colNo += errMsg.size();
 			if(colNo == temp.size())return parseError(MISSING_SYMBOL);
-			if( temp[colNo] != 32 ) return parseError(MISSING_SPACE);	
-			colNo++;	
-			if(colNo == temp.size())return parseError(MISSING_SYMBOL);	
+			if( temp[colNo] != 32 ) return parseError(MISSING_SPACE);
+			colNo++;
+			if(colNo == temp.size())return parseError(MISSING_SYMBOL);
 			errMsg = temp.substr(colNo);
 			//reset ss
 			ss.str("");
 			ss.ignore();
-			//containing""								
+			//containing""
 			if(errMsg.empty()) return parseError(ILLEGAL_SYMBOL_TYPE);
 			//check whether containing unprintable character
 			for(size_t j=0; j<errMsg.size();j++)
@@ -488,14 +490,14 @@ CirMgr::readCircuit(const string& fileName)
 			}
 			colNo += errMsg.size();
 			if(colNo == temp.size())return parseError(MISSING_SYMBOL);
-			if( temp[colNo] != 32 )	return parseError(MISSING_SPACE);	
-			colNo++;	
-			if(colNo == temp.size())return parseError(MISSING_SYMBOL);	
+			if( temp[colNo] != 32 )	return parseError(MISSING_SPACE);
+			colNo++;
+			if(colNo == temp.size())return parseError(MISSING_SYMBOL);
 			errMsg = temp.substr(colNo);
-			//reset ss and set eof 
+			//reset ss and set eof
 			ss.str("");
 			ss.ignore();
-			//containing""								
+			//containing""
 			if(errMsg.empty()) return parseError(ILLEGAL_SYMBOL_TYPE);
 			//check whether containing unprintable character
 			for(size_t j=0; j<errMsg.size();j++)
@@ -517,7 +519,7 @@ CirMgr::readCircuit(const string& fileName)
 		}
 	}
 	return true;
-}  
+}
 
 
 /**********************************************************/
@@ -567,7 +569,7 @@ CirMgr::printPIs() const
 
 void
 CirMgr::printPOs() const
-{	
+{
    cout << "POs of the circuit:";
    for(size_t i=0; i<PoList.size(); i++) cout<<" "<<PoList[i];
    cout << endl;
@@ -593,7 +595,7 @@ CirMgr::printFloatGates() const
 			if( fGate1->getType() == UNDEF_GATE)
 				floatingId.push_back(checkgate->getId());
 		}
-		else if(checkgate->getType() == AIG_GATE){	
+		else if(checkgate->getType() == AIG_GATE){
 			unsigned fId1 = (checkgate->getFanin1())>>1;
 			CirGate* fGate1 = cirMgr->_GateList[fId1];
 			unsigned fId2 = (checkgate->getFanin2())>>1;
@@ -607,7 +609,7 @@ CirMgr::printFloatGates() const
 			if((checkgate->getFanout()).empty())
 				unusedId.push_back(checkgate->getId());
 	}
-	
+
 	//floating fanin
 	if(!floatingId.empty()){
 		::sort(floatingId.begin(),floatingId.end());
@@ -624,7 +626,7 @@ CirMgr::printFloatGates() const
 			cout<<" "<<unusedId[i];
 		cout<<"\n";
 	}
-	
+
 }
 
 void
@@ -644,7 +646,7 @@ CirMgr::writeAag(ostream& outfile) const
 			POSymbol << 'o' << i << ' ' << _GateList[PoList[i]]->getSymbol() << '\n' ;
 	}
 	//identifier
-	outfile << "aag " << _GateList.size()-PoList.size()-1 << ' ' << PiList.size() << " 0 " 
+	outfile << "aag " << _GateList.size()-PoList.size()-1 << ' ' << PiList.size() << " 0 "
 			  << PoList.size() << ' ' << A << '\n' ;
 	for(size_t i=0 ; i < PiList.size() ; i++){
 		outfile << 2*PiList[i] << '\n';
@@ -655,5 +657,3 @@ CirMgr::writeAag(ostream& outfile) const
 	//comment
 	outfile << "c\n" <<	"AAG output by Kevin Hsu\n";
 }
-
-
