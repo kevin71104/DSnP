@@ -30,18 +30,28 @@ public:
 
    // TODO
    const Data& min() const { return _data.front(); }
-   void insert(const Data& d) { }
+   void insert(const Data& d) {
+       size_t t = _data.size(); //new node's index
+       _data.push_back(d);
+       while (t > 0){
+           size_t p = (t-1)/2;
+           if ( _data[p] <= d ) break; //child > parent
+           _data[t] = _data[p];
+           t = p;
+       }
+       _data[t] = d;
+   }
    void delMin() { delData(0); }
    void delData(size_t i) {
        Data temp = _data[i];
        size_t p = i, t = 2 * p + 1 ;
        size_t n = _data.size() - 1;
+       if( p >= n) return;
        while(t <= n ){
            if( t < n ) // has right child
                if(_data[t] > _data[t+1])
                    ++t;
-           if( _data[n] < _data[t])
-               break;
+           if( _data[n] < _data[t]) break; //can just use end to replace p
            _data[p] = _data[t];
            p = t;
            t = 2 * p + 1;
