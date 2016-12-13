@@ -35,7 +35,7 @@ public:
        _data.push_back(d);
        while (t > 0){
            size_t p = (t-1)/2;
-           if ( _data[p] <= d ) break; //child > parent
+           if ( _data[p] < d ) break; //child > parent
            _data[t] = _data[p];
            t = p;
        }

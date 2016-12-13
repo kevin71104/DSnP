@@ -18,7 +18,7 @@ using namespace std;
 TaskMgr *taskMgr = 0;
 
 // BEGIN: DO NOT CHANGE THIS PART
-TaskNode::TaskNode() 
+TaskNode::TaskNode()
 {
    _name.resize(NAME_LEN);
    for (int i = 0; i < NAME_LEN; ++i)
@@ -27,7 +27,7 @@ TaskNode::TaskNode()
 }
 
 size_t
-TaskNode::operator () () const 
+TaskNode::operator () () const
 {
    size_t k = 0, n = (_name.length() <= 5)? _name.length(): 5;
    for (size_t i = 0; i < n; ++i)
@@ -53,7 +53,7 @@ TaskMgr::clear()
 
 void
 TaskMgr::remove(size_t nMachines)
-{        
+{
    for (size_t i = 0, n = nMachines; i < n; ++i) {
       size_t j = rnGen(size());
       assert(_taskHash.remove(_taskHeap[j]));
@@ -86,6 +86,15 @@ void
 TaskMgr::add(size_t nMachines)
 {
    // TODO...
+   size_t num = 0;
+   while(num < nMachines){
+       TaskNode temp;
+       if( _taskHash.insert(temp) ){
+           _taskHeap.insert(temp);
+           num ++;
+           cout << "Task node inserted: " << temp << endl;
+       }
+   }
 }
 
 // return true if TaskNode is successfully inserted
@@ -94,6 +103,12 @@ bool
 TaskMgr::add(const string& s, size_t l)
 {
    // TODO...
+   TaskNode temp(s,l);
+   if( _taskHash.insert(temp) ){
+       _taskHeap.insert(temp);
+       cout << "Task node inserted: " << temp << endl;
+       return true;
+   }
    return false;
 }
 
@@ -107,12 +122,20 @@ bool
 TaskMgr::assign(size_t l)
 {
    // TODO...
+   if(empty()) return false;
+   TaskNode temp = _taskHeap.min();
+   //heap
+   temp += l;
+   _taskHeap.delMin();
+   _taskHeap.insert(temp);
+   //hash
+   _taskHash.update(temp);
    return true;
 }
 
 // WARNING: DO NOT CHANGE THESE TWO FUNCTIONS!!
 void
-TaskMgr::printAllHash() const 
+TaskMgr::printAllHash() const
 {
    HashSet<TaskNode>::iterator hi = _taskHash.begin();
    for (; hi != _taskHash.end(); ++hi)

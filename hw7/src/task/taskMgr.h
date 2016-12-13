@@ -44,7 +44,7 @@ private:
 class TaskMgr
 {
 public:
-   TaskMgr(size_t nMachines);
+   TaskMgr(size_t nMachines);   //nMachines : expected # of taskNodes
    ~TaskMgr() {}
 
    void clear();
