@@ -49,7 +49,7 @@ public:
        if( p >= n) return;
        while(t <= n ){
            if( t < n ) // has right child
-               if(_data[t] > _data[t+1])
+               if(_data[t+1] < _data[t])
                    ++t;
            if( _data[n] < _data[t]) break; //can just use end to replace p
            _data[p] = _data[t];
