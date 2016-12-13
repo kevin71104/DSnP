@@ -48,8 +48,33 @@ public:
       friend class HashSet<Data>;
 
    public:
+       iterator(bool begin, size_t num, const vector<Data>* b)
+            :_numBuckets(num), _buckets(b), index(0), pos(0)
+       {
+           if(begin)
+               for(;index < _numBuckets; index ++)
+                   if(!_buckets[index].empty()){
+                       _data = _buckets[index][pos];
+                       break;
+                   }
+           else index = _numBuckets; //iterator end
+       }
 
+       Data& operator * () const;
+       Data& operator *();
+       iterator& operator ++ ();
+       iterator& operator -- ();
+       iterator operator ++ (int);
+       iterator operator -- (int);
+       iterator& operator = (const iterator& i) ;
+       bool operator == (const iterator& i) ;
+       bool operator != (const iterator& i) ;
    private:
+       Data*            _data;
+       size_t           index; //_buckets[index]
+       size_t           pos; //_buckets[index][pos]
+       size_t           _numBuckets;
+       vector<Data>*    _buckets;
    };
 
    void init(size_t b) { _numBuckets = b; _buckets = new vector<Data>[b]; }
@@ -102,7 +127,7 @@ public:
 private:
    // Do not add any extra data member
    size_t            _numBuckets;
-   vector<Data>*     _buckets;
+   vector<Data>*     _buckets;   //each _buckets[i] is a vector<data>
 
    size_t bucketNum(const Data& d) const {
       return (d() % _numBuckets); }
