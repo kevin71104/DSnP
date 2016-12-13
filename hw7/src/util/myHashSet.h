@@ -50,22 +50,24 @@ public:
    public:
        iterator(bool begin, size_t num, vector<Data>* b)
             :index(0), pos(0), _numBuckets(num), _buckets(b){
-           if(begin)
+           if(begin){
                for(;index < _numBuckets; index ++)
                    if(!_buckets[index].empty()){
-                       _data = &_buckets[index][pos];
+                       //_data = &_buckets[index][pos];
                        break;
                    }
+           }
            else index = _numBuckets; //iterator end
        }
        ~iterator(){}
 
-       Data& operator * () const{ return *_data;}
-       Data& operator *() { return *_data;}
+       Data& operator * () const{ return _buckets[index][pos];}
+       Data& operator *() { return _buc[index][pos];}
+
 
        //prefix
        iterator& operator ++ (){
-           /*if(index == _numBuckets) return (*this);
+           if(index == _numBuckets) return (*this);
            if(_buckets[index].size()-1 > pos )
                pos ++;
            else{
@@ -73,24 +75,12 @@ public:
                    if(!_buckets[index].empty()) break;
                pos = 0;
            }
-           if(index != _numBuckets) _data = &_buckets[index][pos];
-           return (*this);*/
-           if(index == _numBuckets) return (*this);
-         else if(pos < _buckets[index].size() - 1) ++pos;
-         else {
-            while(++index < _numBuckets) {
-               if(_buckets[index].size()) {
-                  break;
-               }
-            }
-            pos = 0;
-         }
-         if(index != _numBuckets) _data = &_buckets[index][pos];
-         return (*this);
+           //if(index != _numBuckets) _data = &_buckets[index][pos];
+           return (*this);
        }
 
        iterator& operator -- (){
-           /*if(index == 0 && pos == 0) return (*this);
+           if(index == 0 && pos == 0) return (*this);
            if( pos > 0 )
                pos --;
            else
@@ -101,22 +91,8 @@ public:
                    }
                    if (index == 0) break;
                }
-           _data = &_buckets[index][pos];
-           return (*this);*/
-           if(pos > 0) --pos;
-         else {
-            size_t n = index;
-            while(n > 0) {
-               --n;
-               if(_buckets[n].size()) {
-                  pos = _buckets[n].size() - 1;
-                  index = n;
-                  break;
-               }
-            }
-         }
-         _data = &_buckets[index][pos];
-         return (*this);
+           //_data = &_buckets[index][pos];
+           return (*this);
        }
 
        //postfix
@@ -131,7 +107,7 @@ public:
            return temp;
        }
        iterator& operator = (const iterator& i){
-           _data = i._data;
+           //_data = i._data;
            index = i.index;
            pos = i.pos;
            _numBuckets = i._numBuckets;
@@ -144,7 +120,6 @@ public:
            return ((pos != i.pos) || (index != i.index));
        }
    private:
-       Data*                    _data;
        size_t                   index; //_buckets[index]
        size_t                   pos; //_buckets[index][pos]
        const size_t             _numBuckets;
