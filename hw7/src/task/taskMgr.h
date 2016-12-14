@@ -26,6 +26,7 @@ public:
    TaskNode(const string& n, size_t l) : _name(n), _load(l) {}
    ~TaskNode() {}
 
+   bool operator <= (const TaskNode& n) const { return _load <= n._load; }
    void operator += (size_t l) { _load += l; }
    bool operator == (const TaskNode& n) const { return _name == n._name; }
    bool operator < (const TaskNode& n) const { return _load < n._load; }

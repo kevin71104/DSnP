@@ -62,7 +62,7 @@ public:
        ~iterator(){}
 
        Data& operator * () const{ return _buckets[index][pos];}
-       Data& operator *() { return _buc[index][pos];}
+       Data& operator *() { return _buckets[index][pos];}
 
 
        //prefix
