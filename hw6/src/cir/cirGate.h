@@ -58,7 +58,10 @@ public:
 	virtual void printFanout (const int& totallevel, int nowlevel, bool inverted = false) const=0;
 
 	//virtual function
-	virtual void 		DFS(ostringstream& oss, unsigned& A) const{}
+	virtual void 		DFS(ostringstream& oss, unsigned& A) const{
+		if(isGlobalRef()) return;
+		setToGlobalRef();
+	}
 	virtual void 		printSymbol() const{}
 	virtual void 		setSymbol(const string& str){}
 	virtual void 		setFanout(const IdList& Fanout){}
@@ -78,9 +81,9 @@ public:
 	void 	reportFanout(int level) const ;
 
 	//for DFS
-	bool isGlobalRef() const     { return ( _ref == _globalRef); }
-	void setToGlobalRef() const  { _ref = _globalRef; }
-	static void setGlobalRef()   { ++ _globalRef; }
+	bool 		isGlobalRef() const     { return ( _ref == _globalRef); }
+	void 		setToGlobalRef() const  { _ref = _globalRef; }
+	static void setGlobalRef()   		{ ++ _globalRef; }
 
 protected:
 	unsigned			line;       	//which line define this gate

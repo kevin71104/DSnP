@@ -43,7 +43,7 @@ public:
     void printFloatGates() const;
     void writeAag(ostream&) const;
 
-    void setGateList(size_t size) { _GateList.reserve(size); }
+    //void setGateList(size_t size) { _GateList.reserve(size); }
     static GateList	_GateList;
 
 private:
