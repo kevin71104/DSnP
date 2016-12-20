@@ -220,7 +220,7 @@ CirMgr::readCircuit(const string& fileName)
                 ss.str("");
     //check after this has exactly 1 space and followed with a string
     #define     correctip();                            \
-				if( temp[colNo] != 32 )                 \
+                if( temp[colNo] != 32 )                 \
                     return parseError(MISSING_SPACE);   \
                 colNo++;                                \
                 if( temp[colNo] == 32)                  \
