@@ -211,25 +211,25 @@ CirMgr::readCircuit(const string& fileName)
 
 	//after read in every line check if there is newline at the end
 	//ss.str("") reset ss and can be inserted later
-    #define 	newline();                                 \
-                if(!ss.eof())                              \
-					return parseError(MISSING_NEWLINE);    \
-				++lineNo;                                  \
-				colNo = 0;                                 \
-				ss.clear();                                \
-				ss.str("");
+    #define     newline();                                  \
+                if(!ss.eof())                               \
+                    return parseError(MISSING_NEWLINE);     \
+                ++lineNo;                                   \
+                colNo = 0;                                  \
+                ss.clear();                                 \
+                ss.str("");
     //check after this has exactly 1 space and followed with a string
-    #define 	correctip();							\
-				if( temp[colNo] != 32 ) 				\
-					return parseError(MISSING_SPACE);	\
-				colNo++;								\
-				if( temp[colNo] == 32)					\
-					return parseError(EXTRA_SPACE);		\
-				if(temp[colNo] <= 32){ 					\
-					errMsg = "number of variables";		\
-					return parseError(MISSING_NUM);		\
-				}										\
-				ss >> errMsg;
+    #define     correctip();                            \
+				if( temp[colNo] != 32 )                 \
+                    return parseError(MISSING_SPACE);   \
+                colNo++;                                \
+                if( temp[colNo] == 32)                  \
+                    return parseError(EXTRA_SPACE);     \
+                if(temp[colNo] <= 32){                  \
+                    errMsg = "number of variables";     \
+                    return parseError(MISSING_NUM);     \
+                }                                       \
+                ss >> errMsg;
 	//line & col starts at 1, parseError has +1 inside
    //header
    {
@@ -415,11 +415,9 @@ CirMgr::readCircuit(const string& fileName)
 	}
 
 	//set fanout
-	//for(size_t i=0; i<M; i++)	_GateList[i]->setFanout();
-	for(size_t i=0; i<fanoutList.size(); i++) ::sort(fanoutList[i].begin(),fanoutList[i].end());
 	for(size_t i=0; i<=M; i++){
-        if(_GateList[i]->getType() != PO_GATE)
-            _GateList[i]->setFanout(fanoutList[i]);
+        ::sort(fanoutList[i].begin(),fanoutList[i].end());
+        _GateList[i]->setFanout(fanoutList[i]);
     }
 
     //set symbols, ending by line consisting only "c"
