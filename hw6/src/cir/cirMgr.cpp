@@ -230,10 +230,10 @@ CirMgr::readCircuit(const string& fileName)
                     return parseError(MISSING_NUM);     \
                 }                                       \
                 ss >> errMsg;
-	//line & col starts at 1, parseError has +1 inside
-   //header
-   {
-		getline(ifs,temp);
+    //line & col starts at 1, parseError has +1 inside
+    //header
+    {
+        getline(ifs,temp);
 		//identifer
 		errMsg = "Identifier";
 		if( temp[colNo] == 32) return parseError(EXTRA_SPACE);
@@ -246,7 +246,7 @@ CirMgr::readCircuit(const string& fileName)
 		if( temp.size() == 3 ){
 			errMsg = "number of variables";
 			return parseError(MISSING_NUM);
-		}
+    }
 
 
 		// M
