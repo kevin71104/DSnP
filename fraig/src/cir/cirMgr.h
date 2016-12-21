@@ -16,52 +16,59 @@
 
 using namespace std;
 
-// TODO: Feel free to define your own classes, variables, or functions.
-
 #include "cirDef.h"
 
-extern CirMgr *cirMgr;
+extern	CirMgr*		cirMgr;
 
+// TODO: Define your own data members and member functions
 class CirMgr
 {
 public:
-   CirMgr() {}
-   ~CirMgr() {} 
+    CirMgr(){}
+    //release memory
+    ~CirMgr() { resetList(); _GateList.clear();}
 
-   // Access functions
-   // return '0' if "gid" corresponds to an undefined gate.
-   CirGate* getGate(unsigned gid) const { return 0; }
+    // Access functions
+    // return '0' if "gid" corresponds to an undefined gate.
+    CirGate* getGate(unsigned gid) const;
 
-   // Member functions about circuit construction
-   bool readCircuit(const string&);
+    // Member functions about circuit optimization
+    void sweep();
+    void optimize();
 
-   // Member functions about circuit optimization
-   void sweep();
-   void optimize();
+    // Member functions about simulation
+    void randomSim();
+    void fileSim(ifstream&);
+    void setSimLog(ofstream *logFile) { _simLog = logFile; }
 
-   // Member functions about simulation
-   void randomSim();
-   void fileSim(ifstream&);
-   void setSimLog(ofstream *logFile) { _simLog = logFile; }
+    // Member functions about fraig
+    void strash();
+    void printFEC() const;
+    void fraig();
 
-   // Member functions about fraig
-   void strash();
-   void printFEC() const;
-   void fraig();
+    // Member functions about circuit construction
+    bool readCircuit(const string&);
 
-   // Member functions about circuit reporting
-   void printSummary() const;
-   void printNetlist() const;
-   void printPIs() const;
-   void printPOs() const;
-   void printFloatGates() const;
-   void printFECPairs() const;
-   void writeAag(ostream&) const;
-   void writeGate(ostream&, CirGate*) const;
+    // Member functions about circuit reporting
+    void printSummary() const;
+    void printNetlist() const;
+    void printPIs() const;
+    void printPOs() const;
+    void printFloatGates() const;
+    void printFECPairs() const;
+    void writeAag(ostream&) const;
+    void writeGate(ostream&, CirGate*) const;
+
+    //void setGateList(size_t size) { _GateList.reserve(size); }
+    static GateList	_GateList;
 
 private:
-   ofstream           *_simLog;
+    IdList      PiList;     //storing PIGate's variable ID
+    IdList      PoList;     //storing POGate's variable ID
+    size_t      _AIGNum;    //the number of AIGgates
+    ofstream*   _simLog;
 
+	void resetList(){for(size_t i=0; i<_GateList.size(); i++) delete _GateList[i];}
 };
 
 #endif // CIR_MGR_H
