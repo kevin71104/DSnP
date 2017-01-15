@@ -25,11 +25,11 @@ using namespace std;
 // {
 // public:
 //    HashKey() {}
-// 
+//
 //    size_t operator() () const { return 0; }
-// 
+//
 //    bool operator == (const HashKey& k) const { return true; }
-// 
+//
 // private:
 // };
 //
@@ -56,8 +56,79 @@ public:
       friend class HashMap<HashKey, HashData>;
 
    public:
+      iterator(bool begin, size_t num, vector<HashNode>* b)
+            :index(0), pos(0), _numBuckets(num), _buckets(b){
+           if(begin){
+               for(;index < _numBuckets; index ++)
+                   if(!_buckets[index].empty()){
+                       break;
+                   }
+           }
+           else index = _numBuckets; //iterator end
+       }
+       ~iterator(){}
+
+       HashNode& operator * () const{ return _buckets[index][pos];}
+       HashNode& operator *() { return _buckets[index][pos];}
+
+       //prefix
+       iterator& operator ++ (){
+           if(index == _numBuckets) return (*this);
+           if(_buckets[index].size()-1 > pos )
+               pos ++;
+           else{
+               for(++index; index < _numBuckets; ++index)
+                   if(!_buckets[index].empty()) break;
+               pos = 0;
+           }
+           return (*this);
+       }
+
+       iterator& operator -- (){
+           if(index == 0 && pos == 0) return (*this);
+           if( pos > 0 )
+               pos --;
+           else
+               for(--index; index >= 0 ;--index){
+                   if(!_buckets[index].empty()){
+                       pos = _buckets[index].size()-1;
+                       break;
+                   }
+                   if (index == 0) break;
+               }
+           return (*this);
+       }
+
+       //postfix
+       iterator operator ++ (int){
+           iterator temp = (*this);
+           ++(*this);
+           return temp;
+       }
+       iterator operator -- (int){
+           iterator temp = (*this);
+           --(*this);
+           return temp;
+       }
+
+       iterator& operator = (const iterator& i){
+           index = i.index;
+           pos = i.pos;
+           _numBuckets = i._numBuckets;
+           _buckets = i._buckets;
+       }
+       bool operator == (const iterator& i){
+           return ((pos == i.pos) && (index == i.index));
+       }
+       bool operator != (const iterator& i){
+           return ((pos != i.pos) || (index != i.index));
+       }
 
    private:
+       size_t                   index;
+       size_t                   pos; //_buckets[index][pos]
+       const size_t             _numBuckets;
+       vector<HashNode>*        _buckets;
    };
 
    void init(size_t b) {
@@ -77,11 +148,19 @@ public:
    // TODO: implement these functions
    //
    // Point to the first valid data
-   iterator begin() const { return iterator(); }
+   iterator begin() const { return iterator(true,_numBuckets,_buckets); }
    // Pass the end
-   iterator end() const { return iterator(); }
+   iterator end() const { return iterator(false,_numBuckets,_buckets); }
    // return true if no valid data
-   bool empty() const { return true; }
+   bool empty() const {
+       bool flag = true;
+       for(size_t i=0; i < _buckets.size(); i++)
+           if(!_buckets[i].empty()){
+               flag = false;
+               break;
+           }
+       return flag;
+   }
    // number of valid data
    size_t size() const { size_t s = 0; return s; }
 
@@ -129,14 +208,14 @@ private:
 // {
 // public:
 //    CacheKey() {}
-//    
+//
 //    size_t operator() () const { return 0; }
-//   
+//
 //    bool operator == (const CacheKey&) const { return true; }
-//       
+//
 // private:
-// }; 
-// 
+// };
+//
 template <class CacheKey, class CacheData>
 class Cache
 {

@@ -33,6 +33,24 @@ using namespace std;
 void
 CirMgr::sweep()
 {
+  CirGate::setGlobalRef();
+  //set DFS CONST PI to ref
+  for(unsigned i = 0; i< _DfsList.size(); i++)
+     _DfsList[i]->setToGlobalRef();
+  for(unsigned i = 0; i< PiList.size(); i++)
+     _GateList[ PiList[i] ]->setToGlobalRef();
+  _GateList[0]->setToGlobalRef();
+
+  for(unsigned i = 1; i < _GateList.size() - PoList.size() ; ++i){
+     if(_GateList[i] == 0)
+        continue;
+     if(_GateList[i] -> isGlobalRef())
+        continue;
+     cout << "Sweeping: " << _GateList[i] -> getTypeStr() << '(' << _GateList[i] -> getId() << ") removed...\n";
+     delete _GateList[i];
+     _GateList[i] = 0;
+  }
+  buildDfsList(true);
 }
 
 // Recursively simplifying from POs;

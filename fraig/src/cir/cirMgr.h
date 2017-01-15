@@ -19,6 +19,7 @@ using namespace std;
 #include "cirDef.h"
 
 extern	CirMgr*		cirMgr;
+extern  GateList _DfsList;
 
 // TODO: Define your own data members and member functions
 class CirMgr
@@ -26,7 +27,12 @@ class CirMgr
 public:
     CirMgr(){}
     //release memory
-    ~CirMgr() { resetList(); _GateList.clear();}
+    ~CirMgr() {
+      resetList();
+      GateList temp;
+      _GateList.clear();
+      _DfsList.swap(temp);
+    }
 
     // Access functions
     // return '0' if "gid" corresponds to an undefined gate.
@@ -61,14 +67,21 @@ public:
 
     //void setGateList(size_t size) { _GateList.reserve(size); }
     static GateList	_GateList;
+    //static GateList _DfsList;
 
 private:
-    IdList      PiList;     //storing PIGate's variable ID
-    IdList      PoList;     //storing POGate's variable ID
-    size_t      _AIGNum;    //the number of AIGgates
-    ofstream*   _simLog;
+    IdList          PiList;     //storing PIGate's variable ID
+    IdList          PoList;     //storing POGate's variable ID
+    mutable size_t          _AIGNum;    //the number of AIGgates
+    ofstream*       _simLog;
 
-	void resetList(){for(size_t i=0; i<_GateList.size(); i++) delete _GateList[i];}
+    void resetList(){
+      for(size_t i=0; i<_GateList.size(); i++)
+        if(_GateList[i])
+          delete _GateList[i];
+    }
+    void buildDfsList(bool rebuild);
+    void updateAigNum() const;
 };
 
 #endif // CIR_MGR_H

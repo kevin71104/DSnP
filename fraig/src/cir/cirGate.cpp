@@ -19,8 +19,8 @@ using namespace std;
 
 extern CirMgr *cirMgr;
 unsigned CirGate::	_globalRef = 0;
-GateList CirMgr :: _GateList;
-
+GateList CirMgr::_GateList;
+extern  GateList _DfsList;
 
 // TODO: Implement memeber functions for class(es) in cirGate.h
 
@@ -310,61 +310,44 @@ CONSTGate::printFanout(const int& totallevel, int nowlevel, bool inverted) const
 }
 
 void
-PIGate::printGate(unsigned &lineNum) const
+PIGate::printGate() const
 {
-	if(isGlobalRef()) return;
-	setToGlobalRef();
-	cout<<"["<<lineNum<<"] PI  "<<gateId;
+	cout<<"PI  "<<gateId;
 	printSymbol();
-	lineNum++;
 }
 
 void
-POGate::printGate(unsigned &lineNum) const
+POGate::printGate() const
 {
-	if(isGlobalRef()) return;
-	setToGlobalRef();
-	unsigned variableId = _fanin1>>1;
-	CirGate* faninGate = cirMgr->_GateList[variableId];
-	faninGate->printGate(lineNum);
-
-	cout<<"["<<lineNum<<"] PO  "<<gateId<<" ";
-	if(faninGate->getType() == UNDEF_GATE) cout<<"*";
+	cout<<"PO  "<<gateId<<" ";
+	unsigned fId1 = _fanin1>>1;
+	CirGate* fGate1 = cirMgr->_GateList[fId1];
+	if(fGate1->getType() == UNDEF_GATE) cout<<"*";
 	if(_fanin1 % 2) cout<<"!";
-	cout<<faninGate->getId();
+	cout<<fGate1->getId();
 	printSymbol();
-	lineNum++;
 }
 
 void
-AIGGate::printGate(unsigned &lineNum) const
+AIGGate::printGate() const
 {
-	if(isGlobalRef()) return;
-	setToGlobalRef();
+	cout<<"AIG "<<gateId<<" ";
 	unsigned fId1 = _fanin1>>1;
 	CirGate* fGate1 = cirMgr->_GateList[fId1];
 	unsigned fId2 = _fanin2>>1;
 	CirGate* fGate2 = cirMgr->_GateList[fId2];
-	fGate1->printGate(lineNum);
-	fGate2->printGate(lineNum);
-
-	cout<<"["<<lineNum<<"] AIG "<<gateId<<" ";
 	if(fGate1->getType() == UNDEF_GATE) cout<<"*";
 	if(_fanin1 % 2) cout<<"!";
 	cout<<fGate1->getId()<<" ";
 	if(fGate2->getType() == UNDEF_GATE) cout<<"*";
 	if(_fanin2 % 2) cout<<"!";
 	cout<<fGate2->getId()<<"\n";
-	lineNum++;
 }
 
 void
-CONSTGate::printGate(unsigned &lineNum) const
+CONSTGate::printGate() const
 {
-	if(isGlobalRef()) return;
-	setToGlobalRef();
-	cout<<"["<<lineNum<<"] CONST0\n";
-	lineNum++;
+	cout<<"CONST0\n";
 }
 
 
@@ -376,7 +359,6 @@ POGate::DFS(ostringstream& oss, unsigned& A) const
 	unsigned fId1 = _fanin1>>1;
 	CirGate* fGate1 = cirMgr->_GateList[fId1];
 	fGate1->DFS(oss,A);
-
 }
 
 void
@@ -392,4 +374,65 @@ AIGGate::DFS(ostringstream& oss, unsigned& A) const
 	fGate2->DFS(oss,A);
 	A++;
 	oss << 2*gateId << ' ' << _fanin1 << ' ' << _fanin2 << '\n';
+}
+
+//if inverted to o/p gate's input,fanoutId = o/p gate's variableId*2+1
+void
+POGate::DfsBuild(unsigned fanoutId, bool rebuild)
+{
+	setToGlobalRef();
+	unsigned fId1 = _fanin1>>1;
+	CirGate* fGate1 = cirMgr->_GateList[fId1];
+	unsigned fout = gateId*2 + (_fanin1%2);
+	fGate1->DfsBuild(fout,rebuild);
+	_DfsList.push_back(this);
+}
+
+void
+PIGate::DfsBuild(unsigned fanoutId, bool rebuild)
+{
+	if(rebuild){
+		_fanout.push_back(fanoutId);
+	}
+	if(isGlobalRef()) return;
+	setToGlobalRef();
+	_DfsList.push_back(this);
+}
+
+void
+AIGGate::DfsBuild(unsigned fanoutId, bool rebuild)
+{
+	if(rebuild)
+		_fanout.push_back(fanoutId);
+	if(isGlobalRef()) return;
+	setToGlobalRef();
+	unsigned fId1 = _fanin1>>1;
+	CirGate* fGate1 = cirMgr->_GateList[fId1];
+	unsigned fId2 = _fanin2>>1;
+	CirGate* fGate2 = cirMgr->_GateList[fId2];
+	unsigned fout1 = gateId*2 + (_fanin1%2);
+	unsigned fout2 = gateId*2 + (_fanin2%2);
+	fGate1->DfsBuild(fout1,rebuild);
+	fGate2->DfsBuild(fout2,rebuild);
+	_DfsList.push_back(this);
+}
+
+void
+CONSTGate::DfsBuild(unsigned fanoutId, bool rebuild)
+{
+	if(rebuild)
+		_fanout.push_back(fanoutId);
+	if(isGlobalRef()) return;
+	setToGlobalRef();
+	_DfsList.push_back(this);
+}
+
+void
+UNDEFGate::DfsBuild(unsigned fanoutId, bool rebuild)
+{
+	if(rebuild)
+		_fanout.push_back(fanoutId);
+	if(isGlobalRef()) return;
+	setToGlobalRef();
+	_DfsList.push_back(this);
 }
