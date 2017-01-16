@@ -27,6 +27,7 @@ using namespace std;
 /*******************************/
 CirMgr* cirMgr = 0;
 GateList _DfsList;
+vector<GateList> _FecList;
 
 enum CirParseError {
    EXTRA_SPACE,

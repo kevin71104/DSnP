@@ -20,6 +20,7 @@ using namespace std;
 
 extern	CirMgr*		cirMgr;
 extern  GateList _DfsList;
+extern  vector<GateList> _FecList;
 
 // TODO: Define your own data members and member functions
 class CirMgr
@@ -29,9 +30,9 @@ public:
     //release memory
     ~CirMgr() {
       resetList();
-      GateList temp;
       _GateList.clear();
-      _DfsList.swap(temp);
+      _DfsList.clear();
+      _FecList.clear();
     }
 
     // Access functions
@@ -46,6 +47,7 @@ public:
     void randomSim();
     void fileSim(ifstream&);
     void setSimLog(ofstream *logFile) { _simLog = logFile; }
+    void updateSim();
 
     // Member functions about fraig
     void strash();

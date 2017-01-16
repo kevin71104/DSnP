@@ -26,10 +26,9 @@ using namespace std;
 // TODO: Define your own data members and member functions, or classes
 class CirGate
 {
-	friend class CirMgr;
 public:
 	 CirGate(unsigned lineNum, GateType name, unsigned ID)
-		: line(lineNum), gateId(ID), gateType(name), dfsId(UINT_MAX){}
+		: separate(false), line(lineNum), dfsId(UINT_MAX), gateId(ID), FECNum(UINT_MAX), value(0), gateType(name){}
 	 virtual ~CirGate() {}
 
 	 // Basic access methods
@@ -64,6 +63,7 @@ public:
 		if(isGlobalRef()) return;
 		setToGlobalRef();
 	}
+	virtual void    	updateValue(){}
 	virtual void 		reconnect(CirGate* replace, bool int_or_not){}
 	virtual void 		printSymbol() const{}
 	virtual void 		setFanin1(unsigned Id){}
@@ -77,13 +77,15 @@ public:
 	virtual string		getSymbol() const{return "";}
 	virtual unsigned	getFanin1() const{return 0;}
 	virtual unsigned	getFanin2() const{return 0;}
-	virtual unsigned  getFanoutSize() const{}
+	virtual unsigned  	getFanoutSize() const{ return 0;}
 
 	//getting functions
+	bool      	isSeparate() const{ return separate;}
 	unsigned 	getDfsId()	const { return dfsId; }
 	unsigned	getId()     const { return gateId; }
 	GateType	getType()   const { return gateType; }
 	unsigned	getLineNo() const { return line; }
+	unsigned  	getValue()  const { return value; }
 
 	// Printing functions
 	void 	reportFanin(int level) const ;
@@ -93,16 +95,18 @@ public:
 	bool 		isGlobalRef() const     { return ( _ref == _globalRef); }
 	void 		setToGlobalRef() const  { _ref = _globalRef; }
 	static void setGlobalRef()   		{ ++ _globalRef; }
-
 	void 		setDfsId(unsigned Id) { dfsId = Id; }
 
 protected:
-	unsigned			line;       	//which line define this gate
-	unsigned 			dfsId;
-	unsigned			gateId;       	//variable ID i.e.( >>1 = /2 )
+	bool                separate;     //separate from FEC group or not
+	unsigned			line;        //which line define this gate
+	unsigned 			dfsId;       //location in _DfsList
+	unsigned			gateId;      //variable ID i.e.( >>1 = /2 )
+	unsigned 			FECNum;      //location in _FecList
+	unsigned 			value;       //simulation value
 	GateType			gateType;
 	static unsigned		_globalRef;
-	mutable unsigned	_ref;			//can be altered in const functions
+	mutable unsigned	_ref;			   //can be altered in const functions
 
 };
 
@@ -160,16 +164,17 @@ public:
 	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
 
 	//getting functions
-	string		getSymbol() const { return symbol; }
-	IdList		getFanout() const { return _fanout; }
+	string    getSymbol() const { return symbol; }
+	IdList    getFanout() const { return _fanout; }
 	unsigned  getFanoutSize() const{ return _fanout.size();}
 
 	//setting functions
 	void 	setSymbol(const string& str){ symbol = str; }
 	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
 	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
-	void  clearFanout(){ IdList temp; _fanout.swap(temp); }
+	void    clearFanout(){ IdList temp; _fanout.swap(temp); }
 	void 	DfsBuild(unsigned fanoutId, bool rebuild);
+	void    setValue(unsigned val) { value = val; }
 
 private:
 	IdList	_fanout;	//if inverted to o/p gate's input,store o/p gate's variableId*2+1
@@ -199,6 +204,7 @@ public:
 	void 	setSymbol(const string& str){ symbol = str; }
 	void 	DfsBuild(unsigned fanoutId, bool rebuild);
 	void 	setFanin1(unsigned Id){_fanin1 = Id;}
+	void  updateValue();
 
 private:
 	string		symbol;
@@ -234,6 +240,7 @@ public:
 	void 	reconnect(CirGate* replace, bool int_or_not);
 	void 	setFanin1(unsigned Id){ _fanin1 = Id;}
 	void 	setFanin2(unsigned Id){ _fanin2 = Id;}
+	void  updateValue();
 	/*void 	removeFanout(unsigned Id){
 		for(unsigned i=0; i< _fanout.size(); i++)
 

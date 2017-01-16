@@ -23,6 +23,8 @@ using namespace std;
 /*   Global variable and enum  */
 /*******************************/
 
+#ifndef STRASHKEY_H
+#define STRASHKEY_H
 
 class StrashKey
 {
@@ -40,7 +42,7 @@ class StrashKey
     }
     unsigned operator() () const {
       srandom(fanin2);
-      return ( (fanin1<<9) ^ ( (unsigned)random() ) );
+      return ( (fanin1<<9) ^ unsigned(random())  );
     }
     bool operator == (const StrashKey& k) const { return (fanin1 == k.fanin1 && fanin2 == k.fanin2); }
 
@@ -48,6 +50,8 @@ class StrashKey
     unsigned fanin1;
     unsigned fanin2;
 };
+
+#endif
 
 /**************************************/
 /*   Static varaibles and functions   */

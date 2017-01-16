@@ -21,6 +21,7 @@ extern CirMgr *cirMgr;
 unsigned CirGate::	_globalRef = 0;
 GateList CirMgr::_GateList;
 extern  GateList _DfsList;
+extern  vector<GateList> _FecList;
 
 // TODO: Implement memeber functions for class(es) in cirGate.h
 
@@ -440,6 +441,8 @@ UNDEFGate::DfsBuild(unsigned fanoutId, bool rebuild)
 }
 
 //this gate is replaced by replace
+//only deal with inputs because output will be built by buildDfsList()
+//however, sweep() will need to update CONSTGate right away
 void
 AIGGate::reconnect(CirGate* replace, bool inv_or_not)
 {
@@ -465,4 +468,17 @@ AIGGate::reconnect(CirGate* replace, bool inv_or_not)
 	if(dfsId != UINT_MAX)
 		_DfsList[dfsId] = NULL;
 	delete this;
+}
+void
+POGate::updateValue()
+{
+	value = _fanin1%2 ? ~ (cirMgr->_GateList[_fanin1>>1])->getValue() : (cirMgr->_GateList[_fanin1>>1])->getValue() ;
+}
+
+void
+AIGGate::updateValue()
+{
+	unsigned input1 = _fanin1%2 ? ~ (cirMgr->_GateList[_fanin1>>1])->getValue() : (cirMgr->_GateList[_fanin1>>1])->getValue() ;
+	unsigned input2 = _fanin2%2 ? ~ (cirMgr->_GateList[_fanin2>>1])->getValue() : (cirMgr->_GateList[_fanin2>>1])->getValue() ;
+	value = input1 & input2 ;
 }

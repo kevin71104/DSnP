@@ -72,12 +72,12 @@ CirMgr::optimize()
       if( ip1>>1 == ip2>>1){
         //same phase replace this gate by its input
         if(ip1 == ip2){
-        cout << "Simplifying: " << _GateList[ip1>>1] -> gateId
-             << " merging " << (ip1 % 2 ? "!" : "") << _DfsList[i]->gateId << "...\n";
+        cout << "Simplifying: " << _GateList[ip1>>1]->getId()
+             << " merging " << (ip1 % 2 ? "!" : "") << _DfsList[i]->getId() << "...\n";
         _DfsList[i]->reconnect(_GateList[ip1>>1],ip1 % 2);
         }
         else{
-          cout << "Simplifying: 0 merging " << _DfsList[i]->gateId << "...\n";
+          cout << "Simplifying: 0 merging " << _DfsList[i]->getId() << "...\n";
           _DfsList[i]->reconnect(_GateList[0],0);
         }
       }
@@ -89,24 +89,24 @@ CirMgr::optimize()
       unsigned fanoutId = constList[i];
       check = _GateList[fanoutId>>1];
       if( check == 0) continue;
-      if( check->gateType == PO_GATE) continue;
+      if( check->getType() == PO_GATE) continue;
       //fanoutId%2 : const 1
       if(fanoutId % 2){
         if( check->getFanin1() == 1){
           //reconnect fanin2 gate with output
-          cout << "Simplifying: " << _GateList[check->getFanin2() >>1]->gateId
-               << " merging " << (check->getFanin2() % 2 ? "!" : "") << check->gateId << "...\n";
+          cout << "Simplifying: " << _GateList[check->getFanin2() >>1]->getId()
+               << " merging " << (check->getFanin2() % 2 ? "!" : "") << check->getId() << "...\n";
           check->reconnect(_GateList[check->getFanin2() >>1], check->getFanin2() % 2);
         }
         else{
           //reconnect fanin1 gate with output
-          cout << "Simplifying: " << _GateList[check->getFanin1() >>1]->gateId
-               << " merging " << (check->getFanin1() % 2 ? "!" : "") << check->gateId << "...\n";
+          cout << "Simplifying: " << _GateList[check->getFanin1() >>1]->getId()
+               << " merging " << (check->getFanin1() % 2 ? "!" : "") << check->getId() << "...\n";
           check->reconnect(_GateList[check->getFanin1() >>1], check->getFanin1() % 2);
         }
       }
       else{
-        cout << "Simplifying: 0 merging " << check -> gateId << "...\n";
+        cout << "Simplifying: 0 merging " << check->getId() << "...\n";
         check->reconnect(_GateList[0],0);
       }
       done = false;
