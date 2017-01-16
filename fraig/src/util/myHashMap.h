@@ -114,7 +114,7 @@ public:
            return (_hash == i._hash && _bId == i._bId && _bnId == i._bnId);
        }
        bool operator != (const iterator& i){
-           return ( !(*this) == i);
+           return ( !( (*this) == i ));
        }
 
    private:
