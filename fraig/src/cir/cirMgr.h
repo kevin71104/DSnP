@@ -72,7 +72,7 @@ public:
 private:
     IdList          PiList;     //storing PIGate's variable ID
     IdList          PoList;     //storing POGate's variable ID
-    mutable size_t          _AIGNum;    //the number of AIGgates
+    mutable size_t  _AIGNum;    //the number of AIGgates
     ofstream*       _simLog;
 
     void resetList(){

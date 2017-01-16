@@ -436,3 +436,30 @@ UNDEFGate::DfsBuild(unsigned fanoutId, bool rebuild)
 	setToGlobalRef();
 	_DfsList.push_back(this);
 }
+
+void
+AIGGate::reconnect(CirGate* replace, bool inv_or_not)
+{
+	unsigned replaceId = replace->getId();
+	for(unsigned i = 0; i< _fanout.size(); i++){
+		CirGate* temp = cirMgr->_GateList[_fanout[i]>>1 ];
+		if (temp != 0){
+			//fanout inputs' literalId
+			unsigned ip1 = temp->getFanin1();
+			unsigned ip2 = temp->getFanin2();
+			// ^ bitwise XOR if inv_or_not & ip1(2)%2 are different then add 1
+			if( ip1>>1 == gateId ){
+				temp->setFanin1( replaceId * 2 + ( inv_or_not^(ip1%2) ) );
+				replace->addFanout( ( 2 * temp->getId() + (temp->getFanin1() % 2) ) );
+			}
+			else{
+				temp->setFanin2( replaceId * 2 + ( inv_or_not^(ip2%2) ) );
+				replace->addFanout( ( 2 * temp->getId() + (temp->getFanin2() % 2) ) );
+			}
+		}
+	}
+	cirMgr->_GateList[gateId] = 0;
+	if(dfsId != UINT_MAX)
+		_DfsList[dfsId] = NULL;
+	delete this;
+}

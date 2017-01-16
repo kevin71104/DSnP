@@ -56,9 +56,66 @@ CirMgr::sweep()
 // Recursively simplifying from POs;
 // _dfsList needs to be reconstructed afterwards
 // UNDEF gates may be delete if its fanout becomes empty...
+//const 0 1 as fanins
+//AIG with same fanin (INV or not)
 void
 CirMgr::optimize()
 {
+  CirGate* check;
+  bool done;
+  do{
+    done = true;
+    //check same input
+    for(unsigned int i=0 ; i< _DfsList.size() ; i++){
+      if(_DfsList[i] == 0) continue;
+      if(_DfsList[i]->getType() != AIG_GATE) continue;
+      unsigned ip1 = _DfsList[i]->getFanin1();
+      unsigned ip2 = _DfsList[i]->getFanin2();
+      if( ip1>>1 == ip2>>1){
+        //same phase replace this gate by its input
+        if(ip1 == ip2){
+        cout << "Simplifying: " << _GateList[ip1>>1] -> gateId
+             << " merging " << (ip1 % 2 ? "!" : "") << _DfsList[i]->gateId << "...\n";
+        _DfsList[i]->reconnect(_GateList[ip1>>1],ip1 % 2);
+        }
+        else{
+          cout << "Simplifying: 0 merging " << _DfsList[i]->gateId << "...\n";
+          _DfsList[i]->reconnect(_GateList[0],0);
+        }
+      }
+    }
+
+    //const 0 1 fanins
+    IdList constList= _GateList[0]->getFanout();
+    for(unsigned i = 0;i< constList.size(); i++ ){
+      unsigned fanoutId = constList[i];
+      check = _GateList[fanoutId>>1];
+      if( check == 0) continue;
+      if( check->gateType == PO_GATE) continue;
+      //fanoutId%2 : const 1
+      if(fanoutId % 2){
+        if( check->getFanin1() == 1){
+          //reconnect fanin2 gate with output
+          cout << "Simplifying: " << _GateList[check->getFanin2() >>1]->gateId
+               << " merging " << (check->getFanin2() % 2 ? "!" : "") << check->gateId << "...\n";
+          check->reconnect(_GateList[check->getFanin2() >>1], check->getFanin2() % 2);
+        }
+        else{
+          //reconnect fanin1 gate with output
+          cout << "Simplifying: " << _GateList[check->getFanin1() >>1]->gateId
+               << " merging " << (check->getFanin1() % 2 ? "!" : "") << check->gateId << "...\n";
+          check->reconnect(_GateList[check->getFanin1() >>1], check->getFanin1() % 2);
+        }
+      }
+      else{
+        cout << "Simplifying: 0 merging " << check -> gateId << "...\n";
+        check->reconnect(_GateList[0],0);
+      }
+      done = false;
+    }
+  }
+  while (!done);
+  buildDfsList(true);
 }
 
 /***************************************************/

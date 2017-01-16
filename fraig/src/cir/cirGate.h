@@ -26,7 +26,7 @@ using namespace std;
 // TODO: Define your own data members and member functions, or classes
 class CirGate
 {
-	//friend class CirMgr;
+	friend class CirMgr;
 public:
 	 CirGate(unsigned lineNum, GateType name, unsigned ID)
 		: line(lineNum), gateId(ID), gateType(name){}
@@ -64,11 +64,15 @@ public:
 		if(isGlobalRef()) return;
 		setToGlobalRef();
 	}
+	virtual void 		reconnect(CirGate* replace, bool int_or_not){}
 	virtual void 		printSymbol() const{}
+	virtual void 		setFanin1(unsigned Id){}
+	virtual void 		setFanin2(unsigned Id){}
 	virtual void 		setSymbol(const string& str){}
 	virtual void 		setFanout(const IdList& Fanout){}
 	virtual void 		addFanout(unsigned Id){}
 	virtual	void 		clearFanout(){}
+	//virtual void 		removeFanout(unsigned Id){}
 	virtual IdList		getFanout() const{return IdList();}
 	virtual string		getSymbol() const{return "";}
 	virtual unsigned	getFanin1() const{return 0;}
@@ -191,6 +195,7 @@ public:
 	//setting functions
 	void 	setSymbol(const string& str){ symbol = str; }
 	void 	DfsBuild(unsigned fanoutId, bool rebuild);
+	void 	setFanin1(unsigned Id){_fanin1 = Id;}
 
 private:
 	string		symbol;
@@ -222,6 +227,13 @@ public:
 	void 	addFanout(unsigned Id) { _fanout.push_back(Id); }
 	void  clearFanout(){ IdList temp; _fanout.swap(temp); }
 	void 	DfsBuild(unsigned fanoutId, bool rebuild);
+	void 	reconnect(CirGate* replace, bool int_or_not);
+	void 	setFanin1(unsigned Id){ _fanin1 = Id;}
+	void 	setFanin2(unsigned Id){ _fanin2 = Id;}
+	/*void 	removeFanout(unsigned Id){
+		for(unsigned i=0; i< _fanout.size(); i++)
+
+	}*/
 
 private:
 	IdList		_fanout;	//if inverted to o/p gate's input,store o/p gate's variableId*2+1

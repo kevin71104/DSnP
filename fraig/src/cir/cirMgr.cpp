@@ -200,7 +200,7 @@ CirMgr::getGate(unsigned gid) const
 bool
 CirMgr::readCircuit(const string& fileName)
 {
-	ifstream ifs(fileName.c_str());
+  ifstream ifs(fileName.c_str());
    if (!ifs) {
       cerr << "Error: \"" << fileName << "\" does not exist!!" << endl;
       return false;
@@ -642,51 +642,6 @@ CirMgr::printFloatGates() const
 	}
 
 }
-/*
-void
-CirMgr::printFloatGates() const
-{
-   bool flag = 0;
-   ostringstream oss;
-   oss << "Gates with floating fanin(s):";
-   for(unsigned i = 0 ; i < _GateList.size() ; ++i){
-      if(_GateList[i] == 0)
-         continue;
-      if(_GateList[i]->getType() == PO_GATE){
-         if(_GateList[ _GateList[i]->getFanin1()>>1 ]->getType() == UNDEF_GATE){
-            flag = 1;
-            oss << ' ' << _GateList[i]->getId();
-         }
-      }
-      else if(_GateList[i]->getType() == AIG_GATE){
-         if(_GateList[ _GateList[i]->getFanin1()>>1 ]->getType() == UNDEF_GATE){
-            flag = 1;
-            oss << ' ' << _GateList[i]->getId();
-         }
-         else if(_GateList[ _GateList[i]->getFanin2()>>1 ]->getType() == UNDEF_GATE){
-            flag = 1;
-            oss << ' ' << _GateList[i]->getId();
-         }
-      }
-   }
-   if(flag)
-      cout << oss.str();
-   oss.str("");
-   flag = 0;
-   oss << "\nGates defined but not used  :";
-   for(unsigned i = 0 ; i < _GateList.size() ; ++i){
-      if(_GateList[i] == 0)
-         continue;
-      if(_GateList[i]->getType() == AIG_GATE || _GateList[i]->getType() == PI_GATE)
-         if((_GateList[i]->getFanout()).empty()){
-            flag = 1;
-            oss << ' ' << _GateList[i]->getId();
-         }
-   }
-   if(flag)
-      cout << oss.str();
-   cout << '\n';
-}*/
 
 void
 CirMgr::writeAag(ostream& outfile) const
