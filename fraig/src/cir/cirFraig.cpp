@@ -12,6 +12,7 @@
 #include "sat.h"
 #include "myHashMap.h"
 #include "util.h"
+#include <cstdlib>
 
 using namespace std;
 
@@ -21,6 +22,32 @@ using namespace std;
 /*******************************/
 /*   Global variable and enum  */
 /*******************************/
+
+
+class StrashKey
+{
+  public:
+    StrashKey(CirGate* gate) {
+      if(gate->getType() == UNDEF_GATE){
+        fanin1 = UINT_MAX;
+        fanin2 = UINT_MAX;
+        return;
+      }
+      fanin1 = gate->getFanin1();
+      fanin2 = gate->getFanin2();
+      if (fanin1 > fanin2)
+        swap(fanin1,fanin2);
+    }
+    unsigned operator() () const {
+      srandom(fanin2);
+      return ( (fanin1<<9) ^ ( (unsigned)random() ) );
+    }
+    bool operator == (const StrashKey& k) const { return (fanin1 == k.fanin1 && fanin2 == k.fanin2); }
+
+  private:
+    unsigned fanin1;
+    unsigned fanin2;
+};
 
 /**************************************/
 /*   Static varaibles and functions   */
@@ -34,6 +61,31 @@ using namespace std;
 void
 CirMgr::strash()
 {
+  HashMap < StrashKey , CirGate* > strashMap(_DfsList.size());
+  bool merge = false;
+  //put AIGGate & UNDEFGate in strashMap according to DFS order
+  for(unsigned i=0; i< _DfsList.size(); i++){
+    CirGate* temp = 0;
+    CirGate* checkGate = _DfsList[i];
+
+    if(checkGate == 0) return;
+    else if(checkGate->getType() == UNDEF_GATE || checkGate->getType() == AIG_GATE){
+      if(! strashMap.insert( StrashKey(checkGate) , checkGate , temp ) ){
+        merge = true;
+        if( temp->getFanoutSize() >= checkGate->getFanoutSize()){
+          //stored data's _fanout is bigger. Thus, temp substitutes for checkGate
+          cout << "Strashing: " << temp->getId() << " merging " << checkGate->getId() << "...\n" ;
+          checkGate->reconnect(temp,0);
+        }
+        else{
+          cout << "Strashing: " << checkGate->getId() << " merging " << temp->getId() << "...\n" ;
+          temp->reconnect(checkGate,0);
+          strashMap.replaceInsert( StrashKey(checkGate) , checkGate );
+        }
+      }
+    }
+  }
+  if(merge) buildDfsList(true);
 }
 
 void

@@ -554,18 +554,16 @@ CirMgr::printSummary() const
 void
 CirMgr::printNetlist() const
 {
-  for (unsigned i = 0, n = _DfsList.size(); i < n; ++i) {
-    cout << "[" << i << "] ";
+  cout << "\n";
+  unsigned lineNo = 0;
+  for (unsigned i = 0, n = _DfsList.size(); i < n; i++, lineNo++) {
+    if(_DfsList[i]->getType() == UNDEF_GATE){
+      lineNo--;
+      continue;
+    }
+    cout << "[" << lineNo << "] ";
     _DfsList[i]->printGate();
   }
-	/*
-	//reset _ref to _globalRef
-	for(size_t i=0 ; i<_DfsList.size(); i++)
-    _DfsList[i]->setToGlobalRef();
-	CirGate::setGlobalRef();
-	cout<<"\n";
-	for(size_t i=0; i<PoList.size();i++)
-		_GateList[PoList[i]]->printGate(lineNum);*/
 }
 
 void

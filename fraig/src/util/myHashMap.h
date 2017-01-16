@@ -33,6 +33,8 @@ using namespace std;
 // private:
 // };
 //
+
+
 template <class HashKey, class HashData>
 class HashMap
 {
@@ -144,7 +146,7 @@ public:
    }
    // Pass the end
    iterator end() const { return iterator(const_cast<HashMap<HashKey, HashData>*>(this),_numBuckets, 0);}
-   
+
    // return true if no valid data
    bool empty() const {
       for(size_t i=0; i < _numBuckets; i++)
@@ -165,7 +167,6 @@ public:
      size_t b = bucketNum(k);
      for (size_t i = 0; i < _buckets[b].size(); i++)
        if (_buckets[b][i].first == k) {
-          n = _buckets[b][i].second;
           return true;
        }
      return false;
@@ -190,11 +191,12 @@ public:
    bool update(const HashKey& k, HashData& d) { return false; }
 
    // return true if inserted d successfully (i.e. k is not in the hash)
-   // return false is k is already in the hash ==> will not insert
-   bool insert(const HashKey& k, const HashData& d) {
+   // return false is k is already in the hash ==> will not insert and info will get stored data
+   bool insert(const HashKey& k, const HashData& d, HashData& info) {
      size_t b = bucketNum(k);
      for (size_t i = 0; i < _buckets[b].size(); i++)
        if (_buckets[b][i].first == k) {
+          info = _buckets[b][i].second;
           return false;
        }
      _buckets[b].push_back(HashNode(k, d));

@@ -9,9 +9,7 @@
 #include <cassert>
 #include "cirMgr.h"
 #include "cirGate.h"
-#include "util.h"
 
-using namespace std;
 
 // TODO: Please keep "CirMgr::sweep()" and "CirMgr::optimize()" for cir cmd.
 //       Feel free to define your own variables or functions
@@ -44,7 +42,7 @@ CirMgr::sweep()
   for(unsigned i = 1; i < _GateList.size() - PoList.size() ; ++i){
      if(_GateList[i] == 0)
         continue;
-     if(_GateList[i] -> isGlobalRef())
+     if(_GateList[i]->isGlobalRef())
         continue;
      cout << "Sweeping: " << _GateList[i] -> getTypeStr() << '(' << _GateList[i] -> getId() << ") removed...\n";
      delete _GateList[i];

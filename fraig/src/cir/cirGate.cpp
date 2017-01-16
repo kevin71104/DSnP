@@ -89,8 +89,9 @@ void
 CirGate::reportFanin(int level) const
 {
 	assert (level >= 0);
-	for(size_t i=0 ; i< cirMgr->_GateList.size(); i++)
-		(cirMgr->_GateList[i])->setToGlobalRef();
+	/*for(size_t i=0 ; i< cirMgr->_GateList.size(); i++)
+		if(cirMgr->_GateList[i] != 0)
+			(cirMgr->_GateList[i])->setToGlobalRef();*/
 	CirGate::setGlobalRef();
 	int Level = level;
 	//by iterative calling printFanin
@@ -182,8 +183,9 @@ void
 CirGate::reportFanout(int level) const
 {
    assert (level >= 0);
-   for(size_t i=0 ; i< cirMgr->_GateList.size(); i++)
-		(cirMgr->_GateList[i])->setToGlobalRef();
+   /*for(size_t i=0 ; i< cirMgr->_GateList.size(); i++)
+	 	if(cirMgr->_GateList[i] != 0)
+			(cirMgr->_GateList[i])->setToGlobalRef();*/
 	CirGate::setGlobalRef();
 	int Level = level;
 	//by iterative calling printFanout
@@ -437,6 +439,7 @@ UNDEFGate::DfsBuild(unsigned fanoutId, bool rebuild)
 	_DfsList.push_back(this);
 }
 
+//this gate is replaced by replace
 void
 AIGGate::reconnect(CirGate* replace, bool inv_or_not)
 {

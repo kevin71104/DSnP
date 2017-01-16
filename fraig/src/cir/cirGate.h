@@ -29,7 +29,7 @@ class CirGate
 	friend class CirMgr;
 public:
 	 CirGate(unsigned lineNum, GateType name, unsigned ID)
-		: line(lineNum), gateId(ID), gateType(name){}
+		: line(lineNum), gateId(ID), gateType(name), dfsId(UINT_MAX){}
 	 virtual ~CirGate() {}
 
 	 // Basic access methods
@@ -77,6 +77,7 @@ public:
 	virtual string		getSymbol() const{return "";}
 	virtual unsigned	getFanin1() const{return 0;}
 	virtual unsigned	getFanin2() const{return 0;}
+	virtual unsigned  getFanoutSize() const{}
 
 	//getting functions
 	unsigned 	getDfsId()	const { return dfsId; }
@@ -131,7 +132,8 @@ public:
 	void 	reportGate() const;
 
 	//getting functions
-	IdList	getFanout() const { return _fanout; }
+	IdList	  getFanout() const { return _fanout; }
+	unsigned  getFanoutSize() const{ return _fanout.size();}
 
 	//setting functions
 	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
@@ -158,8 +160,9 @@ public:
 	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
 
 	//getting functions
-	string	getSymbol() const { return symbol; }
-	IdList	getFanout() const { return _fanout; }
+	string		getSymbol() const { return symbol; }
+	IdList		getFanout() const { return _fanout; }
+	unsigned  getFanoutSize() const{ return _fanout.size();}
 
 	//setting functions
 	void 	setSymbol(const string& str){ symbol = str; }
@@ -221,6 +224,7 @@ public:
 	IdList		getFanout() const { return _fanout; }
 	unsigned	getFanin1() const { return _fanin1; }
 	unsigned	getFanin2() const { return _fanin2; }
+	unsigned  getFanoutSize() const{ return _fanout.size();}
 
 	//setting functions
 	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
@@ -255,7 +259,8 @@ public:
 	void 	printFanout (const int& totallevel, int nowlevel, bool inverted = false) const;
 
 	//getting functions
-	IdList	getFanout() const { return _fanout; }
+	IdList		getFanout() const { return _fanout; }
+	unsigned  getFanoutSize() const{ return _fanout.size();}
 
 	//setting functions
 	void 	setFanout(const IdList& Fanout) { _fanout = Fanout; }
