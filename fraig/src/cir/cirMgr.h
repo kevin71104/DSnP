@@ -26,13 +26,13 @@ extern  vector<GateList> _FecList;
 class CirMgr
 {
 public:
-    CirMgr(){}
+    CirMgr(){    }
     //release memory
     ~CirMgr() {
       resetList();
+      _GateList.clear();
       vector<GateList> temp;
       GateList temp1;
-      _GateList.clear();
       _DfsList.clear();
       _DfsList.swap(temp1);
       _FecList.clear();

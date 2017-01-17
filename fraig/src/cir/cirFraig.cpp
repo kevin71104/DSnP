@@ -72,29 +72,25 @@ CirMgr::strash()
     CirGate* temp = 0;
     CirGate* checkGate = _DfsList[i];
 
-    if(checkGate == 0) return;
-    else if(checkGate->getType() == UNDEF_GATE || checkGate->getType() == AIG_GATE){
-      if(! strashMap.insert( StrashKey(checkGate) , checkGate , temp ) ){
-        merge = true;
-        if( temp->getFanoutSize() >= checkGate->getFanoutSize()){
-          //stored data's _fanout is bigger. Thus, temp substitutes for checkGate
-          cout << "Strashing: " << temp->getId() << " merging " << checkGate->getId() << "...\n" ;
-          checkGate->reconnect(temp,0);
+    //if(checkGate == 0) continue;
+    if(checkGate->getType() == UNDEF_GATE || checkGate->getType() == AIG_GATE){
+        if(!strashMap.insert( StrashKey( checkGate ), checkGate, temp)){
+           cout << "Strashing: " << temp->getId() << " merging " << checkGate->getId() << "...\n";
+           checkGate->reconnect( temp , 0 );
+           merge = true;
         }
-        else{
-          cout << "Strashing: " << checkGate->getId() << " merging " << temp->getId() << "...\n" ;
-          temp->reconnect(checkGate,0);
-          strashMap.replaceInsert( StrashKey(checkGate) , checkGate );
-        }
-      }
     }
   }
   if(merge) buildDfsList(true);
+
 }
 
 void
 CirMgr::fraig()
 {
+    SatSolver solver;
+    solver.initialize();
+    
 }
 
 /********************************************/

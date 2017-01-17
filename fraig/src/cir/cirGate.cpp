@@ -514,6 +514,7 @@ AIGGate::reconnect(CirGate* replace, bool inv_or_not)
 			}
 		}
 	}
+
 	cirMgr->_GateList[gateId] = 0;
 	if(dfsId != UINT_MAX)
 		_DfsList[dfsId] = NULL;

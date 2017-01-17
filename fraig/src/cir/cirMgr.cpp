@@ -710,10 +710,9 @@ CirMgr::buildDfsList(bool rebuild)
   _DfsList.swap(tempDfsList);
   for(unsigned i=0; i< PoList.size(); i++)
     _GateList[PoList[i]]->DfsBuild(0,rebuild);
-  for(unsigned i=0; i< _GateList.size(); i++){
+  for(unsigned i=0; i< _GateList.size(); i++)
     if(_GateList[i] != 0)
       _GateList[i]->setDfsId(UINT_MAX);
-  }
   for(unsigned i=0; i< _DfsList.size(); i++)
     _DfsList[i]->setDfsId(i);
 }

@@ -203,6 +203,7 @@ public:
      return true;
    }
 
+
    // return true if inserted d successfully (i.e. k is not in the hash)
    // return false is k is already in the hash ==> will not insert and info will get stored data
    bool insertDataptr(const HashKey& k, const HashData& d, HashData* &info) {

@@ -98,6 +98,11 @@ CirMgr::separateFEC(unsigned num)
     bool fail = (_FecList.size() <= newFecList.size());
     _FecList.swap(newFecList);
 
+    //sort _FecList
+    for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
+
     //if need to output log file
     if(_simLog){
         for(unsigned i=0; i<= num; i++){
@@ -147,11 +152,6 @@ CirMgr::randomSim()
     for(unsigned i=0; i< _FecList.size(); i++)
         for(unsigned j=0; j< _FecList[i].size(); j++)
           _FecList[i][j]->setFecNum(i);
-
-    //sort _FecList
-    for(unsigned i=0; i<_FecList.size(); i++)
-        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
-    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
 
     cerr << "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b          \r";
     cout << testNum*32 << " patterns simulated.\n";
@@ -211,11 +211,6 @@ CirMgr::fileSim(ifstream& patternFile)
   for(unsigned i=0; i< _FecList.size(); i++)
       for(unsigned j=0; j< _FecList[i].size(); j++)
         _FecList[i][j]->setFecNum(i);
-
-  //sort _FecList
-  for(unsigned i=0; i<_FecList.size(); i++)
-      ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
-  ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
 
   cout << "\nTotal #FEC Group = " << _FecList.size() << '\n';
   cout << num << " patterns simulated.\n";
