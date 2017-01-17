@@ -28,7 +28,7 @@ class CirGate
 {
 public:
 	 CirGate(unsigned lineNum, GateType name, unsigned ID)
-		: separate(false), line(lineNum), dfsId(UINT_MAX), gateId(ID), FECNum(UINT_MAX), value(0), gateType(name){}
+		: separate(false), line(lineNum), dfsId(UINT_MAX), gateId(ID), FecNum(UINT_MAX), value(0), gateType(name){}
 	 virtual ~CirGate() {}
 
 	 // Basic access methods
@@ -86,6 +86,7 @@ public:
 	GateType	getType()   const { return gateType; }
 	unsigned	getLineNo() const { return line; }
 	unsigned  	getValue()  const { return value; }
+	unsigned    getFecNum() const { return FecNum; }
 
 	// Printing functions
 	void 	reportFanin(int level) const ;
@@ -95,14 +96,18 @@ public:
 	bool 		isGlobalRef() const     { return ( _ref == _globalRef); }
 	void 		setToGlobalRef() const  { _ref = _globalRef; }
 	static void setGlobalRef()   		{ ++ _globalRef; }
-	void 		setDfsId(unsigned Id) { dfsId = Id; }
+
+	// Setting functions
+	void    setDfsId(unsigned Id) { dfsId = Id; }
+	void    setFecNum (unsigned Num) { FecNum = Num; }
+	void    setSeparate( bool sep) { separate = sep; }
 
 protected:
 	bool                separate;     //separate from FEC group or not
 	unsigned			line;        //which line define this gate
 	unsigned 			dfsId;       //location in _DfsList
 	unsigned			gateId;      //variable ID i.e.( >>1 = /2 )
-	unsigned 			FECNum;      //location in _FecList
+	unsigned 			FecNum;      //location in _FecList
 	unsigned 			value;       //simulation value
 	GateType			gateType;
 	static unsigned		_globalRef;

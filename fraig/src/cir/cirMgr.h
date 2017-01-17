@@ -30,9 +30,13 @@ public:
     //release memory
     ~CirMgr() {
       resetList();
+      vector<GateList> temp;
+      GateList temp1;
       _GateList.clear();
       _DfsList.clear();
+      _DfsList.swap(temp1);
       _FecList.clear();
+      _FecList.swap(temp);
     }
 
     // Access functions
@@ -44,10 +48,10 @@ public:
     void optimize();
 
     // Member functions about simulation
-    void randomSim();
-    void fileSim(ifstream&);
-    void setSimLog(ofstream *logFile) { _simLog = logFile; }
-    void updateSim();
+    void  randomSim();
+    void  fileSim(ifstream&);
+    void  setSimLog(ofstream *logFile) { _simLog = logFile; }
+    void  separateFEC(unsigned num=31);
 
     // Member functions about fraig
     void strash();

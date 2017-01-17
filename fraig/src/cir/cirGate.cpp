@@ -49,6 +49,13 @@ PIGate::reportGate() const
 	if(symbol != "") oss << "\"" << symbol << "\"";
 	oss << ", line " << line;
 	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	oss.str("");
+	cout << "= Value: ";
+	for(unsigned k=0; k < 32; k++){
+		if(! (k%4) && k) cout << '_';
+		cout << (value >> k) %2 ;
+	}
+	cout << " =\n";
 	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
 }
 
@@ -61,6 +68,13 @@ POGate::reportGate() const
 	if(symbol != "") oss << "\"" << symbol << "\"";
 	oss << ", line " << line;
 	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	oss.str("");
+	cout << "= Value: ";
+	for(unsigned k=0; k < 32; k++){
+		if(! (k%4) && k) cout << '_';
+		cout << (value >> k) %2 ;
+	}
+	cout << " =\n";
 	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
 }
 
@@ -72,6 +86,24 @@ AIGGate::reportGate() const
 	oss << "= " << this->getTypeStr() << "(" << gateId << ")";
 	oss << ", line " << line;
 	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	oss.str("");
+	if(FecNum != UINT_MAX){
+		unsigned tempValue=UINT_MAX;
+		for(unsigned i=0; i<_FecList[FecNum].size();i++){
+			if(i == 0) tempValue = _FecList[FecNum][i]->getValue();
+			if(_FecList[FecNum][i]->getId() == gateId) continue;
+			oss << " " << (_FecList[FecNum][i]->getValue() == tempValue ? "" : "!")
+			    << _FecList[FecNum][i]->getId();
+		}
+	}
+	cout << "= FECs:" << setfill(' ') << setw(42) << left << oss.str() << "=\n";
+	oss.str("");
+	cout << "= Value: ";
+	for(unsigned k=0; k < 32; k++){
+		if(! (k%4) && k) cout << '_';
+		cout << (value >> k) %2 ;
+	}
+	cout << " =\n";
 	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
 }
 
@@ -83,8 +115,27 @@ CONSTGate::reportGate() const
 	oss << "= " << this->getTypeStr() << "(" << gateId << ")";
 	oss << ", line " << line;
 	cout << setfill(' ') << setw(49) << left << oss.str() << "=\n";
+	oss.str("");
+	if(FecNum != UINT_MAX){
+		unsigned tempValue=UINT_MAX;
+		for(unsigned i=0; i<_FecList[FecNum].size();i++){
+			if(i == 0) tempValue = _FecList[FecNum][i]->getValue();
+			if(_FecList[FecNum][i]->getId() == gateId) continue;
+			oss << " " << (_FecList[FecNum][i]->getValue() == tempValue ? "" : "!")
+			    << _FecList[FecNum][i]->getId();
+		}
+	}
+	cout << "= FECs:" << setfill(' ') << setw(42) << left << oss.str() << "=\n";
+	oss.str("");
+	cout << "= Value: ";
+	for(unsigned k=0; k < 32; k++){
+		if(! (k%4) && k) cout << '_';
+		cout << (value >> k) %2 ;
+	}
+	cout << " =\n";
 	cout << setfill('=') << setw(51) << right << '\n' << setfill(' ');
 }
+
 
 void
 CirGate::reportFanin(int level) const
@@ -394,9 +445,8 @@ POGate::DfsBuild(unsigned fanoutId, bool rebuild)
 void
 PIGate::DfsBuild(unsigned fanoutId, bool rebuild)
 {
-	if(rebuild){
+	if(rebuild)
 		_fanout.push_back(fanoutId);
-	}
 	if(isGlobalRef()) return;
 	setToGlobalRef();
 	_DfsList.push_back(this);

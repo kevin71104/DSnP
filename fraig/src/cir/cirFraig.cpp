@@ -65,7 +65,7 @@ class StrashKey
 void
 CirMgr::strash()
 {
-  HashMap < StrashKey , CirGate* > strashMap(_DfsList.size());
+  HashMap < StrashKey , CirGate* > strashMap( getHashSize( _DfsList.size() ) );
   bool merge = false;
   //put AIGGate & UNDEFGate in strashMap according to DFS order
   for(unsigned i=0; i< _DfsList.size(); i++){

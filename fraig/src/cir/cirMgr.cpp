@@ -555,6 +555,7 @@ CirMgr::printSummary() const
 void
 CirMgr::printNetlist() const
 {
+  CirGate::setGlobalRef();
   cout << "\n";
   unsigned lineNo = 0;
   for (unsigned i = 0, n = _DfsList.size(); i < n; i++, lineNo++) {
@@ -674,23 +675,34 @@ CirMgr::writeAag(ostream& outfile) const
 void
 CirMgr::printFECPairs() const
 {
+    for(unsigned i=0; i<_FecList.size(); i++){
+        unsigned tempValue=UINT_MAX;
+        cout << "[" << i << ']';
+        for(unsigned j=0; j<_FecList[i].size(); j++){
+            if(j == 0) tempValue = _FecList[i][j]->getValue();
+            cout << " " << (_FecList[i][j]->getValue() == tempValue ? "" : "!") << _FecList[i][j]->getId();
+        }
+        cout << '\n';
+    }
 }
 
 void
 CirMgr::writeGate(ostream& outfile, CirGate *g) const
 {
 }
+
 //PRIVATE functions
+
 void
 CirMgr::buildDfsList(bool rebuild)
 {
+  for(unsigned i=0; i< _DfsList.size(); i++)
+    if(_DfsList[i])
+      _DfsList[i]->clearFanout();
   if(rebuild){
-    for(unsigned i=0; i< _DfsList.size(); i++)
-      if(_DfsList[i])
-          _DfsList[i]->clearFanout();
-          for(unsigned i=0; i< PiList.size(); i++)
-          _GateList[PiList[i]]->clearFanout();
-          _GateList[0]->clearFanout();
+    for(unsigned i=0; i< PiList.size(); i++)
+        _GateList[PiList[i]]->clearFanout();
+    _GateList[0]->clearFanout();
   }
   CirGate::setGlobalRef();
   //_DfsList.clear() will have bugs (run hw6)

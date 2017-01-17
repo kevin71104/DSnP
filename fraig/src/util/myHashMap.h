@@ -203,6 +203,19 @@ public:
      return true;
    }
 
+   // return true if inserted d successfully (i.e. k is not in the hash)
+   // return false is k is already in the hash ==> will not insert and info will get stored data
+   bool insertDataptr(const HashKey& k, const HashData& d, HashData* &info) {
+     size_t b = bucketNum(k);
+     for (size_t i = 0; i < _buckets[b].size(); i++)
+       if (_buckets[b][i].first == k) {
+          info = &(_buckets[b][i].second);
+          return false;
+       }
+     _buckets[b].push_back(HashNode(k, d));
+     return true;
+   }
+
    // return true if inserted successfully (i.e. k is not in the hash)
    // return false is k is already in the hash ==> still do the insertion
    bool replaceInsert(const HashKey& k, const HashData& d) {

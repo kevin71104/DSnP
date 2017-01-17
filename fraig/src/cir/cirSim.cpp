@@ -24,7 +24,8 @@ class FecKey
 {
   public:
     FecKey(unsigned val): value(val) {}
-    unsigned operator() () const { return value; }
+    //make sure value & ~value will have same () overloading
+    unsigned operator() () const { return ( value > ~value ? value : ~value); }
     //~ :bitwise not
     bool operator == (const FecKey& k) const { return (value == k.value || value == ~ k.value); }
   private:
@@ -39,6 +40,17 @@ class FecKey
 /*******************************/
 /*   Global variable and enum  */
 /*******************************/
+struct sortGList{
+    bool operator() (CirGate* g1, CirGate* g2){
+        return (g1->getId() < g2->getId());
+    }
+}sortGateList;
+
+struct sortVecGList{
+    bool operator() (GateList& l1, GateList& l2){
+        return (l1[0]->getId() < l2[0]->getId());
+    }
+}sortVecGateList;
 
 /**************************************/
 /*   Static varaibles and functions   */
@@ -48,11 +60,65 @@ class FecKey
 /*   Public member functions about Simulation   */
 /************************************************/
 
+//get simulation value and separate original FEC groups
+//num : # of bits tested (default value is 31)
 void
-CirMgr::updateSim()
+CirMgr::separateFEC(unsigned num)
 {
-  for(unsigned i = 0 ; i < _DfsList.size() ; i++)
-    _DfsList[i]->updateValue();
+    //update simulation value
+    for(unsigned i = 0 ; i < _DfsList.size() ; i++)
+        _DfsList[i]->updateValue();
+
+    vector<GateList> newFecList;
+    //using hashmap to separate original Fec groups(i.e. _FecList[i])
+    for(unsigned i=0; i<_FecList.size(); i++){
+        HashMap< FecKey, GateList > newFecGroup(getHashSize( _FecList[i].size() ));
+        for(unsigned j=0; j<_FecList[i].size(); j++){
+            GateList tempList(1,_FecList[i][j]);
+            GateList* info;
+            //check if there has GateList with same sim value
+            //if not insert it
+            //if yes get the ptr of that GateList and push_back this gate
+            if (! newFecGroup.insertDataptr(FecKey(_FecList[i][j]->getValue()), tempList, info) )
+                info->push_back(_FecList[i][j]);
+        }
+        //put newFecGroup into newFecList
+        //*it will get pair<FecKey,GateList> -> (*it).second = newFecGroup
+        for(HashMap<FecKey,GateList>::iterator it = newFecGroup.begin(); it != newFecGroup.end(); it++){
+            //if GateList has only 1 gate -> separated
+            if( (*it).second.size() == 1)
+                (*it).second[0]->setSeparate(true);
+            else
+                newFecList.push_back( (*it).second );
+        }
+    }
+    _FecList.swap(newFecList);
+
+    //update FecNum
+    for(unsigned i=0; i< _GateList.size(); i++){
+      if(_GateList[i] != 0)
+        _GateList[i]->setFecNum(UINT_MAX);
+    }
+    for(unsigned i=0; i< _FecList.size(); i++)
+        for(unsigned j=0; j< _FecList[i].size(); j++)
+            _FecList[i][j]->setFecNum(i);
+
+    //sort _FecList
+    for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
+
+    //if need to output log file
+    if(_simLog){
+        for(unsigned i=0; i<= num; i++){
+            for(unsigned j=0; j<PiList.size(); j++)
+                *_simLog << ( (_GateList[PiList[j]]->getValue() >> (num-i) )%2 );
+            *_simLog << ' ';
+            for(unsigned j=0; j<PoList.size(); j++)
+                *_simLog << ( (_GateList[PoList[j]]->getValue() >> (num-i) )%2 );
+            *_simLog << endl;
+        }
+    }
 }
 
 //_FecList will only contain FEC group
@@ -86,11 +152,13 @@ CirMgr::fileSim(ifstream& patternFile)
         cerr << "Error: Pattern(" << pattern << ") length(" << pattern.size()
              << ") does not match the number of inputs(" << PiList.size()
              << ") in a circuit!!\n";
+        _FecList.clear();
         return;
       }
       for(unsigned i=0; i<PiList.size(); i++){
           if(pattern[i] != '0' && pattern[i] != '1'){
             cerr << "Error: Pattern(" << pattern << ") contains a non-0/1 character('" << pattern[i] << "').\n";
+            _FecList.clear();
             return;
           }
           unsigned tempval = _GateList[PiList[i]]->getValue();
@@ -102,18 +170,11 @@ CirMgr::fileSim(ifstream& patternFile)
       patternFile >> pattern;
 
       //check if it's enough bits to simulate or reach eof
-      if( num % 32 == 0 || patternFile.eof() ){
-          updateSim();
-          vector<GateList> newFecList;
-          //using hashmap to separate original Fec groups
-          for(unsigned i=0; i<_FecList.size(); i++){
-              HashMap< FecKey, GateList > newFecGroup(_FecList.size());
-              for(unsigned j=0; j<_FecList[i].size(); j++)
-          }
-      }
-  }
-
-
+      if( num % 32 == 0 || patternFile.eof() )
+          separateFEC( (num-1)%32 );
+  }//end while
+  cout << "\nTotal #FEC Group = " << _FecList.size() << '\n';
+  cout << num << " patterns simulated.\n";
 }
 
 /*************************************************/
