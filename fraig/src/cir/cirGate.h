@@ -101,6 +101,7 @@ public:
 	void    setDfsId(unsigned Id) { dfsId = Id; }
 	void    setFecNum (unsigned Num) { FecNum = Num; }
 	void    setSeparate( bool sep) { separate = sep; }
+	void    setValue( unsigned val) { value = val; }
 
 protected:
 	bool                separate;     //separate from FEC group or not

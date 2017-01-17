@@ -51,7 +51,7 @@ public:
     void  randomSim();
     void  fileSim(ifstream&);
     void  setSimLog(ofstream *logFile) { _simLog = logFile; }
-    void  separateFEC(unsigned num=31);
+    bool  separateFEC(unsigned num=31);
 
     // Member functions about fraig
     void strash();

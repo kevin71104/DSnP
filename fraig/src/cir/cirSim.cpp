@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include "cirMgr.h"
 #include "cirGate.h"
 #include "util.h"
@@ -62,7 +63,8 @@ struct sortVecGList{
 
 //get simulation value and separate original FEC groups
 //num : # of bits tested (default value is 31)
-void
+//if # of FEC groups doesn't decrease return true
+bool
 CirMgr::separateFEC(unsigned num)
 {
     //update simulation value
@@ -92,21 +94,9 @@ CirMgr::separateFEC(unsigned num)
                 newFecList.push_back( (*it).second );
         }
     }
+
+    bool fail = (_FecList.size() <= newFecList.size());
     _FecList.swap(newFecList);
-
-    //update FecNum
-    for(unsigned i=0; i< _GateList.size(); i++){
-      if(_GateList[i] != 0)
-        _GateList[i]->setFecNum(UINT_MAX);
-    }
-    for(unsigned i=0; i< _FecList.size(); i++)
-        for(unsigned j=0; j< _FecList[i].size(); j++)
-            _FecList[i][j]->setFecNum(i);
-
-    //sort _FecList
-    for(unsigned i=0; i<_FecList.size(); i++)
-        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
-    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
 
     //if need to output log file
     if(_simLog){
@@ -119,6 +109,7 @@ CirMgr::separateFEC(unsigned num)
             *_simLog << endl;
         }
     }
+    return fail;
 }
 
 //_FecList will only contain FEC group
@@ -126,6 +117,44 @@ CirMgr::separateFEC(unsigned num)
 void
 CirMgr::randomSim()
 {
+    //if _FecList is empty, put CONST & AIG gates in _DfsList in one FEC Group
+    if(_FecList.empty()){
+        _FecList.push_back(GateList(0));
+        if(! _GateList[0]->isSeparate())
+            _FecList[0].push_back(_GateList[0]);
+        for(unsigned i=0; i<_DfsList.size(); i++)
+            if( ! _DfsList[i]->isSeparate() && _DfsList[i]->getType() == AIG_GATE)
+                _FecList[0].push_back(_DfsList[i]);
+    }
+
+    unsigned maxFail = log(_DfsList.size())/log(2.1), failNum = 0, testNum = 0;
+    cout << "MAX_FAIL = " << maxFail << '\n';
+    while(failNum < maxFail){
+        //set simulation value
+        for(unsigned i=0; i<PiList.size(); i++)
+            _GateList[PiList[i]]->setValue( unsigned(rnGen(INT_MAX) + rnGen(INT_MAX)) );
+        if( separateFEC() ) failNum++;
+        else failNum = 0;
+        cerr << "\b\b\b\b\b     \rTotal #FEC Group = " << _FecList.size();
+        testNum++;
+    }
+
+    //update FecNum
+    for(unsigned i=0; i< _GateList.size(); i++){
+      if(_GateList[i] != 0)
+        _GateList[i]->setFecNum(UINT_MAX);
+    }
+    for(unsigned i=0; i< _FecList.size(); i++)
+        for(unsigned j=0; j< _FecList[i].size(); j++)
+          _FecList[i][j]->setFecNum(i);
+
+    //sort _FecList
+    for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
+
+    cerr << "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b          \r";
+    cout << testNum*32 << " patterns simulated.\n";
 }
 
 void
@@ -173,6 +202,21 @@ CirMgr::fileSim(ifstream& patternFile)
       if( num % 32 == 0 || patternFile.eof() )
           separateFEC( (num-1)%32 );
   }//end while
+
+  //update FecNum
+  for(unsigned i=0; i< _GateList.size(); i++){
+    if(_GateList[i] != 0)
+      _GateList[i]->setFecNum(UINT_MAX);
+  }
+  for(unsigned i=0; i< _FecList.size(); i++)
+      for(unsigned j=0; j< _FecList[i].size(); j++)
+        _FecList[i][j]->setFecNum(i);
+
+  //sort _FecList
+  for(unsigned i=0; i<_FecList.size(); i++)
+      ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+  ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
+
   cout << "\nTotal #FEC Group = " << _FecList.size() << '\n';
   cout << num << " patterns simulated.\n";
 }
