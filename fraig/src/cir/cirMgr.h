@@ -57,6 +57,7 @@ public:
     void strash();
     void printFEC() const;
     void fraig();
+    void specialSim(vector< vector<unsigned> >& patternList);
 
     // Member functions about circuit construction
     bool readCircuit(const string&);

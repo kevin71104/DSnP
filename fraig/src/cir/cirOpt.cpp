@@ -44,7 +44,7 @@ CirMgr::sweep()
         continue;
      if(_GateList[i]->isGlobalRef())
         continue;
-     cout << "Sweeping: " << _GateList[i] -> getTypeStr() << '(' << _GateList[i] -> getId() << ") removed...\n";
+     cerr << "Sweeping: " << _GateList[i] -> getTypeStr() << '(' << _GateList[i] -> getId() << ") removed...\n";
      delete _GateList[i];
      _GateList[i] = 0;
   }
@@ -71,7 +71,7 @@ CirMgr::optimize()
       unsigned ip2 = _DfsList[i]->getFanin2();
       if( ip1>>1 == ip2>>1){
         //same phase replace this gate by its input
-        if(ip1 == ip2){
+        if(ip1 == ip2){cerr << "111111111111111111\n";
         cout << "Simplifying: " << _GateList[ip1>>1]->getId()
              << " merging " << (ip1 % 2 ? "!" : "") << _DfsList[i]->getId() << "...\n";
         _DfsList[i]->reconnect(_GateList[ip1>>1],ip1 % 2);

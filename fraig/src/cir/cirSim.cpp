@@ -41,6 +41,8 @@ class FecKey
 /*******************************/
 /*   Global variable and enum  */
 /*******************************/
+
+//sorting functions
 struct sortGList{
     bool operator() (CirGate* g1, CirGate* g2){
         return (g1->getId() < g2->getId());
@@ -97,12 +99,12 @@ CirMgr::separateFEC(unsigned num)
 
     bool fail = (_FecList.size() <= newFecList.size());
     _FecList.swap(newFecList);
-
+/*
     //sort _FecList
     for(unsigned i=0; i<_FecList.size(); i++)
         ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
     ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
-
+*/
     //if need to output log file
     if(_simLog){
         for(unsigned i=0; i<= num; i++){
@@ -143,6 +145,11 @@ CirMgr::randomSim()
         cerr << "\b\b\b\b\b     \rTotal #FEC Group = " << _FecList.size();
         testNum++;
     }
+
+    //sort _FecList
+    for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
 
     //update FecNum
     for(unsigned i=0; i< _GateList.size(); i++){
@@ -203,6 +210,11 @@ CirMgr::fileSim(ifstream& patternFile)
           separateFEC( (num-1)%32 );
   }//end while
 
+  //sort _FecList
+  for(unsigned i=0; i<_FecList.size(); i++)
+      ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+  ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
+
   //update FecNum
   for(unsigned i=0; i< _GateList.size(); i++){
     if(_GateList[i] != 0)
@@ -214,6 +226,42 @@ CirMgr::fileSim(ifstream& patternFile)
 
   cout << "\nTotal #FEC Group = " << _FecList.size() << '\n';
   cout << num << " patterns simulated.\n";
+}
+
+void
+CirMgr::specialSim( vector< vector<unsigned> >& patternList)
+{
+    vector< vector<CirGate*> > tempp;
+    _FecList.swap(tempp);
+
+    _FecList.push_back(GateList(0));
+    if(! _GateList[0]->isSeparate())
+        _FecList[0].push_back(_GateList[0]);
+    for(unsigned i=0; i<_DfsList.size(); i++)
+        if( ! _DfsList[i]->isSeparate() && _DfsList[i]->getType() == AIG_GATE)
+            _FecList[0].push_back(_DfsList[i]);
+
+    unsigned num = patternList[0].size();
+    for(unsigned i=0; i<num; i++){
+        for(unsigned j=0; j<PiList.size(); j++){
+            if(_GateList[PiList[j]]->getDfsId() != UINT_MAX)
+                _GateList[PiList[j]]->setValue(patternList[j][i]);
+        }
+        separateFEC();
+    }
+
+    //sort _FecList
+    for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
+
+    //update FecNum
+    for(unsigned i=0; i< _GateList.size(); i++)
+      if(_GateList[i] != 0)
+        _GateList[i]->setFecNum(UINT_MAX);
+    for(unsigned i=0; i< _FecList.size(); i++)
+        for(unsigned j=0; j< _FecList[i].size(); j++)
+          _FecList[i][j]->setFecNum(i);
 }
 
 /*************************************************/
