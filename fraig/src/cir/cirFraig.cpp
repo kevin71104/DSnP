@@ -15,6 +15,7 @@
 #include "util.h"
 #include <cstdlib>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -113,16 +114,23 @@ CirMgr::fraig()
 
     bool result;
     Var newV;
+    float Maxfail = 0;
+    float limit = _DfsList.size();
     while(! _FecList.empty()){
+        if(Maxfail > limit) break;
         for(unsigned i=0; i<_FecList.size(); i++){
+            if(Maxfail > limit) break;
             vector< vector<unsigned> > patternList;     //get the special input pattern
             patternList.resize(PiList.size());
             for(unsigned j=0; j<_FecList[i].size(); j++){
                 if(_FecList[i][j] == 0) continue;
+                if(Maxfail > limit ) break;
                 unsigned fail = 0;  //# of none-equivalent times
                 unsigned checkId = _FecList[i][j]->getId();
                 for(unsigned k=j+1; k<_FecList[i].size(); k++){
+                    
                     if(_FecList[i][k] == 0) continue;
+                    if(Maxfail > _DfsList.size()*log(_DfsList.size())) break;
                     unsigned compId = _FecList[i][k]->getId();
                     bool INV = (_FecList[i][j]->getValue() != _FecList[i][k]->getValue());
                     cerr << "\rProving: ( " << checkId << " , " << ( INV ? "!" : "") << compId << " )...";
@@ -157,6 +165,7 @@ CirMgr::fraig()
                             if(_GateList[PiList[l]]->getDfsId() != UINT_MAX)
                                 patternList[l].push_back( unsigned(solver.getValue( satVar[PiList[l]] ) ) );
                         fail ++;
+                        Maxfail ++ ;
                     }
 
                     //it means that _FecList[i][j] is compared to every elements in _FecList[i]
@@ -177,15 +186,17 @@ CirMgr::fraig()
             }//end a FEC group(j-loop)
             buildDfsList(true); //probably merged
             cerr << "\nUpdating Total #FEC Group = " << _FecList.size() << '\n';
+            /*if(_FecList.size()==1)  cerr << "_FecList[0].size()= " << _FecList[0].size() << '\n';
+            cerr << "i= " << i << "\n";*/
             if(_FecList.empty()) break;
             if(_FecList.size() == 1 && _FecList[0].empty()){
                 _FecList.erase(_FecList.begin());
                 break;
             }
             specialSim(patternList);
-
         }//end (i-loop)
     }//end while loop
+
     buildDfsList(true);
     for(unsigned i=0; i<_DfsList.size(); i++)
         _DfsList[i]->setSeparate(false);

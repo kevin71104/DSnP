@@ -161,6 +161,7 @@ CirMgr::randomSim()
           _FecList[i][j]->setFecNum(i);
 
     cerr << "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b          \r";
+    cout << "Total #FEC Group = " << _FecList.size() << '\n';
     cout << testNum*32 << " patterns simulated.\n";
 }
 
@@ -231,15 +232,16 @@ CirMgr::fileSim(ifstream& patternFile)
 void
 CirMgr::specialSim( vector< vector<unsigned> >& patternList)
 {
-    vector< vector<CirGate*> > tempp;
-    _FecList.swap(tempp);
 
-    _FecList.push_back(GateList(0));
-    if(! _GateList[0]->isSeparate())
-        _FecList[0].push_back(_GateList[0]);
-    for(unsigned i=0; i<_DfsList.size(); i++)
-        if( ! _DfsList[i]->isSeparate() && _DfsList[i]->getType() == AIG_GATE)
-            _FecList[0].push_back(_DfsList[i]);
+    //if(_FecList.size()>1){
+        _FecList.clear();
+        _FecList.push_back(GateList(0));
+        if(! _GateList[0]->isSeparate())
+            _FecList[0].push_back(_GateList[0]);
+            for(unsigned i=0; i<_DfsList.size(); i++)
+            if( ! _DfsList[i]->isSeparate() && _DfsList[i]->getType() == AIG_GATE)
+                _FecList[0].push_back(_DfsList[i]);
+    //}
 
     unsigned num = patternList[0].size();
     for(unsigned i=0; i<num; i++){
@@ -249,11 +251,11 @@ CirMgr::specialSim( vector< vector<unsigned> >& patternList)
         }
         separateFEC();
     }
-
+/*
     //sort _FecList
     for(unsigned i=0; i<_FecList.size(); i++)
         ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
-    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);*/
 
     //update FecNum
     for(unsigned i=0; i< _GateList.size(); i++)

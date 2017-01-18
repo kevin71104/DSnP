@@ -71,7 +71,7 @@ CirMgr::optimize()
       unsigned ip2 = _DfsList[i]->getFanin2();
       if( ip1>>1 == ip2>>1){
         //same phase replace this gate by its input
-        if(ip1 == ip2){cerr << "111111111111111111\n";
+        if(ip1 == ip2){
         cout << "Simplifying: " << _GateList[ip1>>1]->getId()
              << " merging " << (ip1 % 2 ? "!" : "") << _DfsList[i]->getId() << "...\n";
         _DfsList[i]->reconnect(_GateList[ip1>>1],ip1 % 2);
