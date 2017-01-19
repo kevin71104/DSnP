@@ -29,8 +29,18 @@ CirMgr* cirMgr = 0;
 GateList _DfsList;
 vector<GateList> _FecList;
 
+//sorting functions
+typedef struct sortGList{
+    bool operator() (CirGate* g1, CirGate* g2){
+        return (g1->getId() < g2->getId());
+    }
+}sortGateList;
 
-
+typedef struct sortVecGList{
+    bool operator() (GateList& l1, GateList& l2){
+        return (l1[0]->getId() < l2[0]->getId());
+    }
+}sortVecGateList;
 
 enum CirParseError {
    EXTRA_SPACE,
@@ -678,9 +688,9 @@ CirMgr::writeAag(ostream& outfile) const
 void
 CirMgr::printFECPairs() const
 {
-    /*for(unsigned i=0; i<_FecList.size(); i++)
-        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
-    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);*/
+    for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList());
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList());
 
     for(unsigned i=0; i<_FecList.size(); i++){
         unsigned tempValue=UINT_MAX;

@@ -115,15 +115,13 @@ CirMgr::fraig()
     bool result;
     Var newV;
     float Maxfail = 0;
-    float limit = sqrt(_DfsList.size());
-    //float limit = float(UINT_MAX);
+    float limit;
     vector< vector<unsigned> > patternList;     //get the special input pattern
     patternList.resize(PiList.size());
     while(! _FecList.empty()){
-        //if(Maxfail > limit) break;
+        limit = sqrt(_DfsList.size())*10;
         for(unsigned i=0; i<_FecList.size(); i++){
-            //if(Maxfail > limit) break;
-            Maxfail = 0;
+            if(Maxfail > limit) break;
             for(unsigned j=0; j<_FecList[i].size(); j++){
                 if(_FecList[i][j] == 0) continue;
                 if(Maxfail > limit ) break;
@@ -179,16 +177,18 @@ CirMgr::fraig()
                     break;
                 }
             }//end a FEC group(j-loop)
-            buildDfsList(true); //probably merged
-            cerr << "\nUpdating Total #FEC Group = " << _FecList.size() << '\n';
-            if(_FecList.empty()) break;
-            if(_FecList.size() == 1 && _FecList[0].empty()){
-                _FecList.erase(_FecList.begin());
-                break;
-            }
-            specialSim(patternList);
         }//end (i-loop)
+        Maxfail = 0;
+        buildDfsList(true); //probably merged
+        specialSim(patternList);
+        cerr << "\nUpdating Total #FEC Group = " << _FecList.size() << '\n';
+        if(_FecList.size() == 1 && _FecList[0].empty()){
+            _FecList.erase(_FecList.begin());
+            break;
+        }
+        //cerr << _FecList[0].size() << "\n";
     }//end while-loop
+
     buildDfsList(true);
     for(unsigned i=0; i<_DfsList.size(); i++)
         _DfsList[i]->setSeparate(false);
