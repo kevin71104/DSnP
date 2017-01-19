@@ -115,22 +115,23 @@ CirMgr::fraig()
     bool result;
     Var newV;
     float Maxfail = 0;
-    float limit = _DfsList.size();
+    float limit = sqrt(_DfsList.size());
+    //float limit = float(UINT_MAX);
+    vector< vector<unsigned> > patternList;     //get the special input pattern
+    patternList.resize(PiList.size());
     while(! _FecList.empty()){
-        if(Maxfail > limit) break;
+        //if(Maxfail > limit) break;
         for(unsigned i=0; i<_FecList.size(); i++){
-            if(Maxfail > limit) break;
-            vector< vector<unsigned> > patternList;     //get the special input pattern
-            patternList.resize(PiList.size());
+            //if(Maxfail > limit) break;
+            Maxfail = 0;
             for(unsigned j=0; j<_FecList[i].size(); j++){
                 if(_FecList[i][j] == 0) continue;
                 if(Maxfail > limit ) break;
                 unsigned fail = 0;  //# of none-equivalent times
                 unsigned checkId = _FecList[i][j]->getId();
                 for(unsigned k=j+1; k<_FecList[i].size(); k++){
-                    
                     if(_FecList[i][k] == 0) continue;
-                    if(Maxfail > _DfsList.size()*log(_DfsList.size())) break;
+                    if(Maxfail > limit) break;
                     unsigned compId = _FecList[i][k]->getId();
                     bool INV = (_FecList[i][j]->getValue() != _FecList[i][k]->getValue());
                     cerr << "\rProving: ( " << checkId << " , " << ( INV ? "!" : "") << compId << " )...";
@@ -143,7 +144,8 @@ CirMgr::fraig()
 
                     //deal with SAT or not
                     if(!result){      //UNSAT -> equivalent
-                        cerr << "UNSAT!!\b\b\b\b\b\b\b\b\b\b          \r";
+                        //cerr << "UNSAT!!\b\b\b\b\b\b\b\b\b\b          \r";
+                        cerr << "UNSAT!!" << "Maxfail= " << Maxfail << "          ";
                         cout << "Fraig: " << checkId  << " merging " << (INV ? "!" : "") << compId << "...\n";
                         _FecList[i][k]->reconnect(_FecList[i][j], INV);
                         _FecList[i].erase(_FecList[i].begin()+k);
@@ -151,23 +153,16 @@ CirMgr::fraig()
                         fail = 0;
                     }
                     else{            //SAT : sepatated
-                        cerr << "SAT!!";
-                        if(_FecList[i][j]->getType() == CONST_GATE) {
-                            if(k == _FecList[i].size()-1){
-                                _FecList[i][j]->setSeparate(true);
-                                _FecList[i].erase(_FecList[i].begin()+j);
-                                j--;
-                            }
-                            continue;
+                        cerr << "SAT!!" << "Maxfail= " << Maxfail << "         ";
+                        if(_FecList[i][j]->getType() != CONST_GATE) {
+                            //get the special pattern
+                            for(unsigned l=0; l<PiList.size(); l++)
+                                if(_GateList[PiList[l]]->getDfsId() != UINT_MAX)
+                                    patternList[l].push_back( unsigned(solver.getValue( satVar[PiList[l]] ) ) );
+                                    fail ++;
+                                    Maxfail ++ ;
                         }
-                        //get the special pattern
-                        for(unsigned l=0; l<PiList.size(); l++)
-                            if(_GateList[PiList[l]]->getDfsId() != UINT_MAX)
-                                patternList[l].push_back( unsigned(solver.getValue( satVar[PiList[l]] ) ) );
-                        fail ++;
-                        Maxfail ++ ;
                     }
-
                     //it means that _FecList[i][j] is compared to every elements in _FecList[i]
                     if(k == _FecList[i].size()-1){
                         _FecList[i][j]->setSeparate(true);
@@ -186,8 +181,6 @@ CirMgr::fraig()
             }//end a FEC group(j-loop)
             buildDfsList(true); //probably merged
             cerr << "\nUpdating Total #FEC Group = " << _FecList.size() << '\n';
-            /*if(_FecList.size()==1)  cerr << "_FecList[0].size()= " << _FecList[0].size() << '\n';
-            cerr << "i= " << i << "\n";*/
             if(_FecList.empty()) break;
             if(_FecList.size() == 1 && _FecList[0].empty()){
                 _FecList.erase(_FecList.begin());
@@ -195,8 +188,7 @@ CirMgr::fraig()
             }
             specialSim(patternList);
         }//end (i-loop)
-    }//end while loop
-
+    }//end while-loop
     buildDfsList(true);
     for(unsigned i=0; i<_DfsList.size(); i++)
         _DfsList[i]->setSeparate(false);

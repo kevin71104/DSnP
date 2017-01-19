@@ -29,6 +29,9 @@ CirMgr* cirMgr = 0;
 GateList _DfsList;
 vector<GateList> _FecList;
 
+
+
+
 enum CirParseError {
    EXTRA_SPACE,
    MISSING_SPACE,
@@ -675,6 +678,10 @@ CirMgr::writeAag(ostream& outfile) const
 void
 CirMgr::printFECPairs() const
 {
+    /*for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList);
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList);*/
+
     for(unsigned i=0; i<_FecList.size(); i++){
         unsigned tempValue=UINT_MAX;
         cout << "[" << i << ']';
