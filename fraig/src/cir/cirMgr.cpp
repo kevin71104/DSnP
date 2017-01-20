@@ -675,6 +675,7 @@ CirMgr::writeAag(ostream& outfile) const
 void
 CirMgr::printFECPairs() const
 {
+    //sort FECList
     for(unsigned i=0; i<_FecList.size(); i++)
         ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList());
     ::sort(_FecList.begin(), _FecList.end(), sortVecGateList());
