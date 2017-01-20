@@ -18,9 +18,9 @@ using namespace std;
 
 #include "cirDef.h"
 
-extern	CirMgr*		cirMgr;
-extern  GateList _DfsList;
-extern  vector<GateList> _FecList;
+extern	CirMgr*		        cirMgr;
+extern  GateList            _DfsList;
+extern  vector<GateList>    _FecList;
 
 // TODO: Define your own data members and member functions
 class CirMgr
@@ -72,6 +72,13 @@ public:
     void writeAag(ostream&) const;
     void writeGate(ostream&, CirGate*) const;
 
+    unsigned getFECsize(){
+        unsigned size=0;
+        for(unsigned i=0; i<_FecList.size();i++)
+            size += _FecList[i].size();
+        return size;
+    }
+
     //void setGateList(size_t size) { _GateList.reserve(size); }
     static GateList	_GateList;
     //static GateList _DfsList;
@@ -90,5 +97,14 @@ private:
     void buildDfsList(bool rebuild);
     void updateAigNum() const;
 };
+
+//sorting functions
+typedef struct sortGList{
+    bool operator() (CirGate* g1, CirGate* g2);
+}sortGateList;
+
+typedef struct sortVecGList{
+    bool operator() (GateList& l1, GateList& l2);
+}sortVecGateList;
 
 #endif // CIR_MGR_H

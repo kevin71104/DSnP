@@ -35,20 +35,7 @@ class FecKey
 };
 
 #endif
-/*
-//sorting functions
-struct sortGList{
-    bool operator() (CirGate* g1, CirGate* g2){
-        return (g1->getId() < g2->getId());
-    }
-}sortGateList;
 
-struct sortVecGList{
-    bool operator() (GateList& l1, GateList& l2){
-        return (l1[0]->getId() < l2[0]->getId());
-    }
-}sortVecGateList;
-*/
 // TODO: Keep "CirMgr::randimSim()" and "CirMgr::fileSim()" for cir cmd.
 //       Feel free to define your own variables or functions
 
@@ -143,7 +130,11 @@ CirMgr::randomSim()
         cerr << "\b\b\b\b\b     \rTotal #FEC Group = " << _FecList.size();
         testNum++;
     }
-
+/*
+    for(unsigned i=0; i<_FecList.size(); i++)
+        ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList());
+    ::sort(_FecList.begin(), _FecList.end(), sortVecGateList());
+*/
     //update FecNum
     for(unsigned i=0; i< _GateList.size(); i++){
       if(_GateList[i] != 0)
@@ -203,7 +194,11 @@ CirMgr::fileSim(ifstream& patternFile)
       if( num % 32 == 0 || patternFile.eof() )
           separateFEC( (num-1)%32 );
   }//end while
-
+/*
+  for(unsigned i=0; i<_FecList.size(); i++)
+      ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList());
+  ::sort(_FecList.begin(), _FecList.end(), sortVecGateList());
+*/
   //update FecNum
   for(unsigned i=0; i< _GateList.size(); i++){
     if(_GateList[i] != 0)
