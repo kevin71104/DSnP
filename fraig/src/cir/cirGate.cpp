@@ -491,8 +491,8 @@ UNDEFGate::DfsBuild(unsigned fanoutId, bool rebuild)
 }
 
 //this gate is replaced by replace
-//only deal with inputs because output will be built by buildDfsList()
-//however, sweep() will need to update CONSTGate right away
+//deal with inputs and new outputs because output will be updated by buildDfsList()
+//adding new outputs because optimize() will need to update CONSTGate right away
 void
 AIGGate::reconnect(CirGate* replace, bool inv_or_not)
 {

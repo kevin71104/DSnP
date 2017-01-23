@@ -141,8 +141,10 @@ CirMgr::fraig()
                 if(_FecList[i][j] == 0) continue;
                 if(Maxfail > limit ) break;
                 unsigned fail = 0;  //# of none-equivalent times
-                if(_FecList[i][j]->getType() == CONST_GATE)
-                    failLimit = 100;
+                if(_FecList[i][j]->getType() == CONST_GATE){
+                    failLimit = _FecList[i].size()/10;
+                    cerr << "\nfailLimit: " << failLimit << '\n';
+                }
                 else
                     failLimit = 2;
                 unsigned checkId = _FecList[i][j]->getId();
@@ -205,13 +207,15 @@ CirMgr::fraig()
             _FecList.erase(_FecList.begin());
             break;
         }
-        //cerr << _FecList[0].size() << "\n";
     }//end while-loop
 
     buildDfsList(true);
-    for(unsigned i=0; i<_DfsList.size(); i++)
+    if(_FecList.size() == 1)
+        if(_FecList[0].empty())
+            _FecList.pop_back();
+/*    for(unsigned i=0; i<_DfsList.size(); i++)
         _DfsList[i]->setSeparate(false);
-    _GateList[0]->setSeparate(false);
+    _GateList[0]->setSeparate(false);*/
 }
 
 

@@ -135,6 +135,11 @@ CirMgr::randomSim()
         ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList());
     ::sort(_FecList.begin(), _FecList.end(), sortVecGateList());
 */
+
+    if(_FecList.size() == 1)
+        if(_FecList[0].empty())
+            _FecList.pop_back();
+
     //update FecNum
     for(unsigned i=0; i< _GateList.size(); i++){
       if(_GateList[i] != 0)
@@ -199,6 +204,11 @@ CirMgr::fileSim(ifstream& patternFile)
       ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList());
   ::sort(_FecList.begin(), _FecList.end(), sortVecGateList());
 */
+
+    if(_FecList.size() == 1)
+        if(_FecList[0].empty())
+            _FecList.pop_back();
+
   //update FecNum
   for(unsigned i=0; i< _GateList.size(); i++){
     if(_GateList[i] != 0)
@@ -232,6 +242,10 @@ CirMgr::specialSim( vector< vector<unsigned> >& patternList)
         }
         separateFEC();
     }
+
+    if(_FecList.size() == 1)
+        if(_FecList[0].empty())
+            _FecList.pop_back();
 
     //update FecNum
     for(unsigned i=0; i< _GateList.size(); i++)
