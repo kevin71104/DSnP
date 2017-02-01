@@ -142,8 +142,9 @@ CirMgr::fraig()
                 if(Maxfail > limit ) break;
                 unsigned fail = 0;  //# of none-equivalent times
                 if(_FecList[i][j]->getType() == CONST_GATE){
-                    failLimit = _FecList[i].size()/10;
-                    cerr << "\nfailLimit: " << failLimit << '\n';
+                    //failLimit = _FecList[i].size()/10;
+                    failLimit = 2;
+                    //cerr << "\nfailLimit: " << failLimit << '\n';
                 }
                 else
                     failLimit = 2;
@@ -183,7 +184,7 @@ CirMgr::fraig()
                     }
                     //it means that _FecList[i][j] is compared to every elements in _FecList[i]
                     if(k == _FecList[i].size()-1){
-                        _FecList[i][j]->setSeparate(true);
+                        //_FecList[i][j]->setSeparate(true);
                         _FecList[i].erase(_FecList[i].begin()+j);
                         j--;
                     }
