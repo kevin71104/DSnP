@@ -119,7 +119,7 @@ CirMgr::randomSim()
                 _FecList[0].push_back(_DfsList[i]);
     }
 
-    unsigned maxFail = log(_DfsList.size())/log(2.1), failNum = 0, testNum = 0;
+    unsigned maxFail = log(_DfsList.size())/log(2.1)*5, failNum = 0, testNum = 0;
     cout << "MAX_FAIL = " << maxFail << '\n';
     while(failNum < maxFail){
         //set simulation value

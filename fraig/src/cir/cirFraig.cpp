@@ -134,6 +134,7 @@ CirMgr::fraig()
     vector< vector<unsigned> > patternList;     //get the special input pattern
     patternList.resize(PiList.size());
     while(! _FecList.empty()){
+        //cout << "entering while loop\n";
         limit = ( getFECsize()>3000 ? getFECsize() : 3000 ) /10;
         for(unsigned i=0; i<_FecList.size(); i++){
             if(Maxfail > limit) break;
@@ -170,6 +171,7 @@ CirMgr::fraig()
                         _FecList[i].erase(_FecList[i].begin()+k);
                         k--;
                         fail = 0;
+                        //Maxfail -- ;
                     }
                     else{            //SAT : sepatated
                         cerr << "SAT!!" << "Maxfail= " << Maxfail << "         ";
