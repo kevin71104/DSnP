@@ -542,8 +542,7 @@ CirMgr::printSummary() const
 {
   //AIGNum probably change due to optimization
   updateAigNum();
-
-	cout<<"\nCircuit Statistics\n"
+  cout   <<"\nCircuit Statistics\n"
 		 <<"==================\n"
 		 <<"  PI "	<<setw(11)<<PiList.size()
 		 <<"\n  PO "<<setw(11)<<PoList.size()
@@ -594,34 +593,34 @@ CirMgr::printFloatGates() const
 {
 	vector<unsigned> floatingId;
 	vector<unsigned> unusedId;
-	for(size_t i=0; i<_GateList.size(); i++){
-		CirGate* checkgate = _GateList[i];
-    if(checkgate == 0) continue;
+    for(size_t i=0; i<_GateList.size(); i++){
+        CirGate* checkgate = _GateList[i];
+        if(checkgate == 0) continue;
 		//checking _fanin1 & _fanin2
 		//check unused gate i.e. AIGGAte & PIGate without _fanout
-		if(checkgate->getType() == PO_GATE){
-			unsigned fId1 = (checkgate->getFanin1())>>1;
-			CirGate* fGate1 = cirMgr->_GateList[fId1];
-      if(fGate1 == 0)
-        floatingId.push_back(checkgate->getId());
-			else if( fGate1->getType() == UNDEF_GATE)
-				floatingId.push_back(checkgate->getId());
-		}
-		else if(checkgate->getType() == AIG_GATE){
-			unsigned fId1 = (checkgate->getFanin1())>>1;
-			CirGate* fGate1 = cirMgr->_GateList[fId1];
-			unsigned fId2 = (checkgate->getFanin2())>>1;
-			CirGate* fGate2 = cirMgr->_GateList[fId2];
-      if(fGate1 == 0 || fGate2 == 0)
-        floatingId.push_back(checkgate->getId());
-			else if( fGate1->getType() == UNDEF_GATE || fGate2->getType() == UNDEF_GATE)
-				floatingId.push_back(checkgate->getId());
-			if((checkgate->getFanout()).empty())
-				unusedId.push_back(checkgate->getId());
-		}
-		else if(checkgate->getType() == PI_GATE )
-			if((checkgate->getFanout()).empty())
-				unusedId.push_back(checkgate->getId());
+        if(checkgate->getType() == PO_GATE){
+            unsigned fId1 = (checkgate->getFanin1())>>1;
+            CirGate* fGate1 = cirMgr->_GateList[fId1];
+            if(fGate1 == 0)
+               floatingId.push_back(checkgate->getId());
+	       else if( fGate1->getType() == UNDEF_GATE)
+               floatingId.push_back(checkgate->getId());
+	    }
+        else if(checkgate->getType() == AIG_GATE){
+            unsigned fId1 = (checkgate->getFanin1())>>1;
+		    CirGate* fGate1 = cirMgr->_GateList[fId1];
+	    	unsigned fId2 = (checkgate->getFanin2())>>1;
+		    CirGate* fGate2 = cirMgr->_GateList[fId2];
+            if(fGate1 == 0 || fGate2 == 0)
+                floatingId.push_back(checkgate->getId());
+		    else if( fGate1->getType() == UNDEF_GATE || fGate2->getType() == UNDEF_GATE)
+			    floatingId.push_back(checkgate->getId());
+		    if((checkgate->getFanout()).empty())
+			    unusedId.push_back(checkgate->getId());
+	    }
+	    else if(checkgate->getType() == PI_GATE )
+		    if((checkgate->getFanout()).empty())
+			unusedId.push_back(checkgate->getId());
 	}
 
 	//floating fanin
@@ -640,7 +639,6 @@ CirMgr::printFloatGates() const
 			cout<<" "<<unusedId[i];
 		cout<<"\n";
 	}
-
 }
 
 void
@@ -648,7 +646,8 @@ CirMgr::writeAag(ostream& outfile) const
 {
 	//reset _ref
 	for(size_t i=0 ; i<_GateList.size(); i++)
-		_GateList[i]->setToGlobalRef();
+        if(_GateList[i] != 0)
+		    _GateList[i]->setToGlobalRef();
 	CirGate::setGlobalRef();
 	unsigned A = 0;
 	ostringstream ossAIG, ossPO, PISymbol, POSymbol;
@@ -676,6 +675,8 @@ void
 CirMgr::printFECPairs() const
 {
     //sort FECList
+
+    if(_FecList.empty()) return;
     for(unsigned i=0; i<_FecList.size(); i++)
         ::sort(_FecList[i].begin(), _FecList[i].end(), sortGateList());
     ::sort(_FecList.begin(), _FecList.end(), sortVecGateList());

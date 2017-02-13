@@ -412,7 +412,8 @@ POGate::DFS(ostringstream& oss, unsigned& A) const
 	setToGlobalRef();
 	unsigned fId1 = _fanin1>>1;
 	CirGate* fGate1 = cirMgr->_GateList[fId1];
-	fGate1->DFS(oss,A);
+	if(fGate1 != 0)
+		fGate1->DFS(oss,A);
 }
 
 void
@@ -424,10 +425,14 @@ AIGGate::DFS(ostringstream& oss, unsigned& A) const
 	CirGate* fGate1 = cirMgr->_GateList[fId1];
 	unsigned fId2 = _fanin2>>1;
 	CirGate* fGate2 = cirMgr->_GateList[fId2];
-	fGate1->DFS(oss,A);
-	fGate2->DFS(oss,A);
-	A++;
-	oss << 2*gateId << ' ' << _fanin1 << ' ' << _fanin2 << '\n';
+	if( fGate1 != 0)
+        fGate1->DFS(oss,A);
+    if( fGate2 != 0)
+	    fGate2->DFS(oss,A);
+	if( fGate1 != 0 || fGate2 != 0){
+	    A++;
+	    oss << 2*gateId << ' ' << _fanin1 << ' ' << _fanin2 << '\n';
+    }
 }
 
 //if inverted to o/p gate's input,fanoutId = o/p gate's variableId*2+1
