@@ -130,11 +130,17 @@ CirMgr::fraig()
     Var newV;
     float Maxfail = 0;
     float limit;
-    unsigned failLimit ;
+    unsigned failLimit;
     vector< vector<unsigned> > patternList;     //get the special input pattern
     patternList.resize(PiList.size());
+
+    /*for(unsigned i=0; i<_FecList.size(); i++){
+        if( i == 0) cout << "report FEC:";
+        cout << " " << _FecList[i].size() ;
+    }*/
+
     while(! _FecList.empty()){
-        limit = ( getFECsize()>3000 ? getFECsize() : 3000 ) /10;
+        limit = ( getFECsize()>1000 ? getFECsize() : 1000 ) /10;
         for(unsigned i=0; i<_FecList.size(); i++){
             if(Maxfail > limit) break;
             for(unsigned j=0; j<_FecList[i].size(); j++){
@@ -142,7 +148,7 @@ CirMgr::fraig()
                 if(Maxfail > limit ) break;
                 unsigned fail = 0;  //# of none-equivalent times
                 if(_FecList[i][j]->getType() == CONST_GATE)
-                    failLimit = 2;
+                    failLimit = 1;
                 else
                     failLimit = 1;
                 unsigned checkId = _FecList[i][j]->getId();
@@ -167,7 +173,7 @@ CirMgr::fraig()
                         _FecList[i].erase(_FecList[i].begin()+k);
                         k--;
                         fail = 0;
-                        //Maxfail -- ;
+                        //Maxfail = 0 ;
                     }
                     else{            //SAT : sepatated
                         cerr << "SAT!!" << "Maxfail= " << Maxfail << "         ";
@@ -182,6 +188,8 @@ CirMgr::fraig()
                     }
                     //it means that _FecList[i][j] is compared to every elements in _FecList[i]
                     if(k == _FecList[i].size()-1){
+                        if(_FecList[i].size() == 2)
+                            _FecList[i][j]->setSeparate(true);
                         _FecList[i].erase(_FecList[i].begin()+j);
                         j--;
                     }
@@ -198,6 +206,7 @@ CirMgr::fraig()
         }//end (i-loop)
         Maxfail = 0;
         buildDfsList(true); //probably merged
+        sweep();
         specialSim(patternList);
         cerr << "\nUpdating Total #FEC Group = " << _FecList.size() << '\n';
         if(_FecList.size() == 1 && _FecList[0].empty()){
