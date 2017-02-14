@@ -130,11 +130,10 @@ CirMgr::fraig()
     Var newV;
     float Maxfail = 0;
     float limit;
-    unsigned failLimit = 2;
+    unsigned failLimit ;
     vector< vector<unsigned> > patternList;     //get the special input pattern
     patternList.resize(PiList.size());
     while(! _FecList.empty()){
-        //cout << "entering while loop\n";
         limit = ( getFECsize()>3000 ? getFECsize() : 3000 ) /10;
         for(unsigned i=0; i<_FecList.size(); i++){
             if(Maxfail > limit) break;
@@ -142,13 +141,10 @@ CirMgr::fraig()
                 if(_FecList[i][j] == 0) continue;
                 if(Maxfail > limit ) break;
                 unsigned fail = 0;  //# of none-equivalent times
-                if(_FecList[i][j]->getType() == CONST_GATE){
-                    //failLimit = _FecList[i].size()/10;
-                    failLimit = 2;
-                    //cerr << "\nfailLimit: " << failLimit << '\n';
-                }
+                if(_FecList[i][j]->getType() == CONST_GATE)
+                    failLimit = 1;
                 else
-                    failLimit = 2;
+                    failLimit = 1;
                 unsigned checkId = _FecList[i][j]->getId();
                 for(unsigned k=j+1; k<_FecList[i].size(); k++){
                     if(_FecList[i][k] == 0) continue;
@@ -186,12 +182,10 @@ CirMgr::fraig()
                     }
                     //it means that _FecList[i][j] is compared to every elements in _FecList[i]
                     if(k == _FecList[i].size()-1){
-                        //_FecList[i][j]->setSeparate(true);
                         _FecList[i].erase(_FecList[i].begin()+j);
                         j--;
                     }
                     if( fail >= failLimit ) break;
-
                 }//end compare(k-loop)
                 if(_FecList[i].size() == 1){
                     _FecList[i][0]->setSeparate(true);
@@ -216,9 +210,6 @@ CirMgr::fraig()
     if(_FecList.size() == 1)
         if(_FecList[0].empty())
             _FecList.pop_back();
-/*    for(unsigned i=0; i<_DfsList.size(); i++)
-        _DfsList[i]->setSeparate(false);
-    _GateList[0]->setSeparate(false);*/
 }
 
 
