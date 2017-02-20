@@ -148,7 +148,7 @@ CirMgr::fraig()
                 if(Maxfail > limit ) break;
                 unsigned fail = 0;  //# of none-equivalent times
                 if(_FecList[i][j]->getType() == CONST_GATE)
-                    failLimit = 1;
+                    failLimit = 2;
                 else
                     failLimit = 1;
                 unsigned checkId = _FecList[i][j]->getId();
@@ -173,7 +173,6 @@ CirMgr::fraig()
                         _FecList[i].erase(_FecList[i].begin()+k);
                         k--;
                         fail = 0;
-                        //Maxfail = 0 ;
                     }
                     else{            //SAT : sepatated
                         cerr << "SAT!!" << "Maxfail= " << Maxfail << "         ";
